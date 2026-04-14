@@ -52,6 +52,7 @@ const App = () => (
         </main>
         <Footer />
       </BrowserRouter>
+      <Analytics />
     </TooltipProvider>
   </QueryClientProvider>
 );
