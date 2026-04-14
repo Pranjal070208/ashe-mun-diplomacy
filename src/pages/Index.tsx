@@ -226,9 +226,9 @@ const Index = () => {
             <AnimatedSection delay={0.1}>
               <div className="space-y-4">
                 {[
-                  { icon: Mail, label: "Email", value: "contact@ashemun.org" },
-                  { icon: Phone, label: "Phone", value: "+1 (555) 123-4567" },
-                  { icon: MapPin, label: "Location", value: "Ashe Convention Center, New York" },
+                  { icon: Mail, label: "Email", value: "contact@ashemun.com" },
+                  { icon: Phone, label: "Phone", value: "+91 9874563210" },
+                  { icon: MapPin, label: "Location", value: "ABC XYZ, Kanpur" },
                 ].map((c, i) => (
                   <div key={i} className="glass-card p-5 flex items-center gap-4 hover:border-primary/20 transition-all">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
