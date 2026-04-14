@@ -43,7 +43,7 @@ function Countdown() {
         <h2 className="font-display text-2xl md:text-3xl font-bold gradient-text mb-10">Ashe MUN 2026</h2>
         <div className="flex items-center justify-center gap-3 md:gap-6">
           {units.map((u, i) => (
-            <div key={i} className="glass-card px-4 py-5 md:px-8 md:py-6 min-w-[70px] md:min-w-[100px]">
+            <div key={i} className="glass-card px-3 py-5 md:px-8 md:py-6 min-w-[65px] md:min-w-[100px]">
               <div className="font-display text-3xl md:text-5xl font-bold gradient-text tabular-nums">
                 {String(u.value).padStart(2, "0")}
               </div>
