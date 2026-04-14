@@ -1,25 +1,60 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Globe, Mic, Scale, Handshake, Mail, Phone, MapPin, Instagram, Twitter, Linkedin, Youtube, Send } from "lucide-react";
+import { Globe, Mic, Scale, Handshake, Mail, Phone, MapPin, Instagram, Twitter, Linkedin, Youtube, Send, Sparkles } from "lucide-react";
 import ParticleBackground from "@/components/ParticleBackground";
 import AnimatedSection from "@/components/AnimatedSection";
 import Marquee from "@/components/Marquee";
 import PageTransition from "@/components/PageTransition";
 
-const stats = [
-  { value: 400, suffix: "+", label: "Delegates" },
-  { value: 8, suffix: "", label: "Committees" },
-  { value: 3, suffix: "", label: "Days" },
-  { value: 50, suffix: "+", label: "Schools" },
+const features = [
+  { icon: Globe, title: "Global Network", desc: "Connect with delegates from institutions across the nation and build lasting relationships." },
+  { icon: Mic, title: "Expert Speakers", desc: "Learn from seasoned diplomats and thought leaders shaping the global discourse." },
+  { icon: Scale, title: "Intense Debates", desc: "Engage in rigorous procedure on the most pressing international issues." },
+  { icon: Handshake, title: "Negotiation Skills", desc: "Master consensus-building, bloc formation, and resolution drafting." },
 ];
 
-const features = [
-  { icon: Globe, title: "Networking Opportunities", desc: "Connect with like-minded delegates from institutions across the nation and forge lasting professional relationships." },
-  { icon: Mic, title: "Expert Speakers", desc: "Gain insights from seasoned diplomats, policy makers, and thought leaders who shape the global discourse." },
-  { icon: Scale, title: "Intense Debates", desc: "Engage in rigorous parliamentary procedure on the most pressing issues facing the international community." },
-  { icon: Handshake, title: "Diplomatic Negotiation", desc: "Master the art of consensus-building, bloc formation, and resolution drafting in realistic simulations." },
-];
+function Countdown() {
+  const target = new Date("2026-08-15T00:00:00").getTime();
+  const [now, setNow] = useState(Date.now());
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const diff = Math.max(0, target - now);
+  const days = Math.floor(diff / 86400000);
+  const hours = Math.floor((diff % 86400000) / 3600000);
+  const minutes = Math.floor((diff % 3600000) / 60000);
+  const seconds = Math.floor((diff % 60000) / 1000);
+
+  const units = [
+    { value: days, label: "Days" },
+    { value: hours, label: "Hours" },
+    { value: minutes, label: "Minutes" },
+    { value: seconds, label: "Seconds" },
+  ];
+
+  return (
+    <section className="relative py-16 bg-surface">
+      <div className="container mx-auto px-6 text-center">
+        <p className="font-heading text-xs tracking-[0.3em] uppercase text-muted-foreground mb-2">Countdown to</p>
+        <h2 className="font-display text-2xl md:text-3xl font-bold gradient-text mb-10">Ashe MUN 2026</h2>
+        <div className="flex items-center justify-center gap-3 md:gap-6">
+          {units.map((u, i) => (
+            <div key={i} className="glass-card px-4 py-5 md:px-8 md:py-6 min-w-[70px] md:min-w-[100px]">
+              <div className="font-display text-3xl md:text-5xl font-bold gradient-text tabular-nums">
+                {String(u.value).padStart(2, "0")}
+              </div>
+              <p className="text-[10px] md:text-xs text-muted-foreground uppercase tracking-wider mt-2 font-body">{u.label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function Counter({ target, suffix }: { target: number; suffix: string }) {
   const [count, setCount] = useState(0);
@@ -29,7 +64,6 @@ function Counter({ target, suffix }: { target: number; suffix: string }) {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          let start = 0;
           const duration = 1500;
           const startTime = performance.now();
           const animate = (now: number) => {
@@ -48,7 +82,7 @@ function Counter({ target, suffix }: { target: number; suffix: string }) {
     return () => observer.disconnect();
   }, [target]);
 
-  return <div ref={ref} className="font-display text-4xl md:text-5xl font-bold text-secondary">{count}{suffix}</div>;
+  return <div ref={ref} className="font-display text-4xl md:text-5xl font-bold gradient-text">{count}{suffix}</div>;
 }
 
 const Index = () => {
@@ -67,13 +101,10 @@ const Index = () => {
       {/* Hero */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <ParticleBackground />
-        {/* Subtle globe wireframe */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
-          <div className="w-[600px] h-[600px] rounded-full border-2 border-primary" />
-        </div>
-        <div className="absolute inset-0 flex items-center justify-center opacity-[0.02] pointer-events-none">
-          <div className="w-[500px] h-[500px] rounded-full border border-primary" />
-        </div>
+        <div className="absolute inset-0 noise-overlay pointer-events-none" />
+        {/* Ambient glow orbs */}
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-secondary/5 blur-[120px] pointer-events-none" />
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -81,28 +112,28 @@ const Index = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="relative z-10 text-center px-6 max-w-4xl"
         >
-          <p className="font-heading text-xs md:text-sm tracking-[0.4em] uppercase text-secondary mb-6">
-            Model United Nations
-          </p>
-          <h1 className="font-display text-7xl md:text-[120px] font-bold tracking-wide leading-none mb-6">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-body tracking-wider uppercase mb-8">
+            <Sparkles size={14} /> Model United Nations
+          </div>
+          <h1 className="font-display text-6xl md:text-[110px] font-bold tracking-tight leading-none mb-6 gradient-text">
             Ashe MUN
           </h1>
-          <p className="font-heading text-base md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
+          <p className="font-body text-base md:text-lg text-muted-foreground max-w-xl mx-auto mb-8 leading-relaxed">
             Deliberate with Clarity. Debate with Passion. Deliver with Purpose.
           </p>
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-secondary/30 text-secondary text-sm font-heading mb-10">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-secondary/30 text-secondary text-sm font-heading mb-10">
             August 15–17, 2026
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               to="/#contact"
-              className="font-heading text-sm px-8 py-3 rounded-lg bg-primary text-primary-foreground hover:shadow-[0_0_30px_hsl(201_55%_56%/0.4)] transition-all duration-300"
+              className="font-heading text-sm px-8 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:shadow-[0_0_40px_hsl(190_80%_55%/0.3)] transition-all duration-300 hover:scale-105"
             >
               Register Now
             </Link>
             <Link
               to="/about"
-              className="font-heading text-sm px-8 py-3 rounded-lg border border-border text-foreground hover:border-primary/50 hover:text-primary transition-all duration-300"
+              className="font-heading text-sm px-8 py-3.5 rounded-full border border-border text-foreground hover:border-primary/50 hover:text-primary transition-all duration-300"
             >
               Learn More
             </Link>
@@ -112,14 +143,21 @@ const Index = () => {
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
       </section>
 
+      {/* Countdown */}
+      <Countdown />
+
       {/* Stats */}
-      <section className="relative py-12 border-y border-border bg-surface">
+      <section className="relative py-12 border-y border-border">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            {stats.map((s, i) => (
-              <div key={i} className={`${i > 0 ? "md:border-l md:border-secondary/20" : ""}`}>
+          <div className="grid grid-cols-3 gap-8 text-center">
+            {[
+              { value: 400, suffix: "+", label: "Delegates" },
+              { value: 8, suffix: "", label: "Committees" },
+              { value: 3, suffix: "", label: "Days" },
+            ].map((s, i) => (
+              <div key={i} className={`${i > 0 ? "md:border-l md:border-border" : ""}`}>
                 <Counter target={s.value} suffix={s.suffix} />
-                <p className="font-heading text-sm text-muted-foreground mt-2 uppercase tracking-wider">{s.label}</p>
+                <p className="font-body text-xs text-muted-foreground mt-2 uppercase tracking-wider">{s.label}</p>
               </div>
             ))}
           </div>
@@ -131,16 +169,18 @@ const Index = () => {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 section-glow opacity-30 pointer-events-none" />
         <div className="container mx-auto px-6">
           <AnimatedSection className="text-center mb-16">
-            <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">Why Ashe MUN?</h2>
-            <div className="w-24 h-0.5 bg-secondary mx-auto" />
+            <h2 className="font-display text-3xl md:text-5xl font-bold mb-4 gradient-text">Why Ashe MUN?</h2>
+            <div className="gradient-divider max-w-[120px] mx-auto" />
           </AnimatedSection>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {features.map((f, i) => (
               <AnimatedSection key={i} delay={i * 0.1}>
-                <div className="glass-card p-6 h-full group hover:border-primary/30 transition-all duration-300 hover:shadow-[0_0_30px_hsl(201_55%_56%/0.1)]">
-                  <f.icon className="text-primary mb-4" size={28} />
-                  <h4 className="font-heading text-lg font-semibold mb-2">{f.title}</h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+                <div className="glass-card p-7 h-full group hover:border-primary/30 hover:scale-[1.02] transition-all duration-300 hover:shadow-[0_8px_40px_hsl(190_80%_55%/0.1)]">
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
+                    <f.icon className="text-primary" size={22} />
+                  </div>
+                  <h4 className="font-heading text-base font-semibold mb-2">{f.title}</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed font-body">{f.desc}</p>
                 </div>
               </AnimatedSection>
             ))}
@@ -153,17 +193,17 @@ const Index = () => {
         <div className="container mx-auto px-6">
           <AnimatedSection>
             <div className="flex flex-col md:flex-row items-center gap-12 max-w-4xl mx-auto">
-              <div className="w-48 h-48 rounded-full border-4 border-secondary/40 bg-card flex-shrink-0 flex items-center justify-center">
-                <span className="font-display text-4xl text-muted-foreground">SG</span>
+              <div className="w-40 h-40 rounded-2xl border-2 border-primary/20 bg-card flex-shrink-0 flex items-center justify-center overflow-hidden">
+                <span className="font-display text-3xl text-muted-foreground">SG</span>
               </div>
               <div>
-                <p className="font-heading text-xs uppercase tracking-[0.3em] text-secondary mb-4">
+                <p className="font-heading text-xs uppercase tracking-[0.3em] text-primary mb-4">
                   A Message from Our Secretary-General
                 </p>
-                <blockquote className="font-display text-xl md:text-2xl italic text-foreground/90 leading-relaxed mb-4">
+                <blockquote className="font-body text-lg md:text-xl text-foreground/90 leading-relaxed mb-4 italic">
                   "At Ashe MUN, we believe that the leaders of tomorrow are shaped by the conversations of today. This conference is more than a simulation — it is a crucible for the ideas, alliances, and convictions that will define our generation's response to global challenges."
                 </blockquote>
-                <p className="text-secondary font-heading text-sm">— The Secretary-General, Ashe MUN 2026</p>
+                <p className="text-primary font-heading text-sm">— The Secretary-General, Ashe MUN 2026</p>
               </div>
             </div>
           </AnimatedSection>
@@ -178,30 +218,32 @@ const Index = () => {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 section-glow opacity-20 pointer-events-none" />
         <div className="container mx-auto px-6">
           <AnimatedSection className="text-center mb-16">
-            <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">Get In Touch</h2>
-            <div className="w-24 h-0.5 bg-secondary mx-auto" />
+            <h2 className="font-display text-3xl md:text-5xl font-bold mb-4 gradient-text">Get In Touch</h2>
+            <div className="gradient-divider max-w-[120px] mx-auto" />
           </AnimatedSection>
 
           <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
             <AnimatedSection delay={0.1}>
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {[
                   { icon: Mail, label: "Email", value: "contact@ashemun.org" },
                   { icon: Phone, label: "Phone", value: "+1 (555) 123-4567" },
                   { icon: MapPin, label: "Location", value: "Ashe Convention Center, New York" },
                 ].map((c, i) => (
-                  <div key={i} className="glass-card p-5 flex items-center gap-4">
-                    <c.icon className="text-primary flex-shrink-0" size={22} />
+                  <div key={i} className="glass-card p-5 flex items-center gap-4 hover:border-primary/20 transition-all">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <c.icon className="text-primary" size={18} />
+                    </div>
                     <div>
-                      <p className="text-xs text-secondary font-heading uppercase tracking-wider">{c.label}</p>
-                      <p className="text-sm text-foreground">{c.value}</p>
+                      <p className="text-[10px] text-muted-foreground font-heading uppercase tracking-wider">{c.label}</p>
+                      <p className="text-sm text-foreground font-body">{c.value}</p>
                     </div>
                   </div>
                 ))}
-                <div className="flex gap-4 pt-4">
+                <div className="flex gap-3 pt-4">
                   {[Instagram, Twitter, Linkedin, Youtube].map((Icon, i) => (
-                    <a key={i} href="#" className="w-10 h-10 rounded-lg glass-card flex items-center justify-center text-muted-foreground hover:text-primary transition-colors">
-                      <Icon size={18} />
+                    <a key={i} href="#" className="w-10 h-10 rounded-full glass-card flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-all">
+                      <Icon size={16} />
                     </a>
                   ))}
                 </div>
@@ -215,15 +257,15 @@ const Index = () => {
                     key={f}
                     type={f === "Email" ? "email" : "text"}
                     placeholder={f}
-                    className="w-full px-4 py-3 rounded-lg bg-card border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                    className="w-full px-5 py-3.5 rounded-2xl bg-card border border-border text-foreground placeholder:text-muted-foreground text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
                   />
                 ))}
                 <textarea
                   placeholder="Message"
                   rows={4}
-                  className="w-full px-4 py-3 rounded-lg bg-card border border-border text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all resize-none"
+                  className="w-full px-5 py-3.5 rounded-2xl bg-card border border-border text-foreground placeholder:text-muted-foreground text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all resize-none"
                 />
-                <button className="w-full font-heading text-sm px-6 py-3 rounded-lg bg-primary text-primary-foreground hover:shadow-[0_0_30px_hsl(201_55%_56%/0.3)] transition-all duration-300 flex items-center justify-center gap-2">
+                <button className="w-full font-heading text-sm px-6 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:shadow-[0_0_40px_hsl(190_80%_55%/0.3)] transition-all duration-300 flex items-center justify-center gap-2">
                   <Send size={16} /> Send Message
                 </button>
               </form>
