@@ -16,10 +16,10 @@ const committees = [
   { acronym: "CC", name: "Crisis Committee", agenda: "Classified — revealed at committee session", difficulty: "Advanced", desc: "A fast-paced, high-stakes simulation where delegates respond to rapidly evolving scenarios in real time. Quick thinking, strategic alliances, and decisive action are essential.", chair: "Classified" },
 ];
 
-const difficultyColor: Record<string, string> = {
-  Advanced: "border-red-500/40 text-red-400",
-  Intermediate: "border-primary/40 text-primary",
-  Beginner: "border-green-500/40 text-green-400",
+const difficultyStyle: Record<string, string> = {
+  Advanced: "bg-destructive/15 text-destructive border-destructive/20",
+  Intermediate: "bg-primary/15 text-primary border-primary/20",
+  Beginner: "bg-green-500/15 text-green-400 border-green-500/20",
 };
 
 const Committees = () => {
@@ -34,17 +34,17 @@ const Committees = () => {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {committees.map((c, i) => (
               <AnimatedSection key={i} delay={i * 0.08}>
-                <div className="glass-card p-6 h-full flex flex-col group hover:border-primary/30 transition-all duration-300">
-                  <h3 className="font-display text-3xl font-bold mb-1">{c.acronym}</h3>
+                <div className="glass-card p-7 h-full flex flex-col group hover:border-primary/30 hover:scale-[1.02] transition-all duration-300 hover:shadow-[0_8px_40px_hsl(190_80%_55%/0.08)]">
+                  <h3 className="font-display text-3xl font-bold mb-1 gradient-text">{c.acronym}</h3>
                   <p className="font-heading text-sm text-muted-foreground mb-3">{c.name}</p>
-                  <p className="text-secondary text-xs italic font-display mb-4 flex-grow">"{c.agenda}"</p>
+                  <p className="text-secondary text-xs italic font-body mb-4 flex-grow">"{c.agenda}"</p>
                   <div className="flex items-center justify-between">
-                    <span className={`text-xs font-heading px-3 py-1 rounded-full border ${difficultyColor[c.difficulty]}`}>
+                    <span className={`text-[10px] font-heading px-3 py-1.5 rounded-full border ${difficultyStyle[c.difficulty]}`}>
                       {c.difficulty}
                     </span>
                     <button
                       onClick={() => setSelected(c)}
-                      className="text-xs font-heading text-primary hover:underline transition-colors"
+                      className="text-xs font-heading text-primary hover:text-secondary transition-colors"
                     >
                       Learn More →
                     </button>
@@ -63,7 +63,7 @@ const Committees = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-background/90 backdrop-blur-xl flex items-center justify-center p-6"
+            className="fixed inset-0 z-50 bg-background/90 backdrop-blur-2xl flex items-center justify-center p-6"
             onClick={() => setSelected(null)}
           >
             <motion.div
@@ -77,21 +77,21 @@ const Committees = () => {
               <button onClick={() => setSelected(null)} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground">
                 <X size={20} />
               </button>
-              <h2 className="font-display text-4xl font-bold mb-1">{selected.acronym}</h2>
+              <h2 className="font-display text-4xl font-bold mb-1 gradient-text">{selected.acronym}</h2>
               <p className="font-heading text-sm text-muted-foreground mb-4">{selected.name}</p>
-              <div className="gold-divider mb-6" />
-              <p className="text-secondary text-sm italic font-display mb-4">Agenda: "{selected.agenda}"</p>
-              <p className="text-muted-foreground text-sm leading-relaxed mb-6">{selected.desc}</p>
+              <div className="gradient-divider mb-6" />
+              <p className="text-secondary text-sm italic font-body mb-4">Agenda: "{selected.agenda}"</p>
+              <p className="text-muted-foreground text-sm leading-relaxed mb-6 font-body">{selected.desc}</p>
               <div className="flex items-center justify-between flex-wrap gap-4">
                 <div>
-                  <p className="text-xs text-muted-foreground font-heading uppercase tracking-wider">Chairperson</p>
+                  <p className="text-[10px] text-muted-foreground font-heading uppercase tracking-wider">Chairperson</p>
                   <p className="text-sm font-heading">{selected.chair}</p>
                 </div>
-                <span className={`text-xs font-heading px-3 py-1 rounded-full border ${difficultyColor[selected.difficulty]}`}>
+                <span className={`text-[10px] font-heading px-3 py-1.5 rounded-full border ${difficultyStyle[selected.difficulty]}`}>
                   {selected.difficulty}
                 </span>
               </div>
-              <button className="mt-6 w-full font-heading text-sm px-6 py-3 rounded-lg bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 transition-all flex items-center justify-center gap-2">
+              <button className="mt-6 w-full font-heading text-sm px-6 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:shadow-[0_0_30px_hsl(190_80%_55%/0.3)] transition-all flex items-center justify-center gap-2">
                 <Download size={16} /> Download Study Guide
               </button>
             </motion.div>

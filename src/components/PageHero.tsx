@@ -9,11 +9,9 @@ interface Props {
 
 const PageHero = ({ title, breadcrumb }: Props) => (
   <section className="relative min-h-[40vh] flex items-center justify-center overflow-hidden">
-    {/* Background grid texture */}
-    <div className="absolute inset-0 opacity-[0.03]" style={{
-      backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 40px, hsl(var(--primary)) 40px, hsl(var(--primary)) 41px)`
-    }} />
-    <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-secondary to-transparent" />
+    <div className="absolute inset-0 noise-overlay pointer-events-none" />
+    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-primary/5 blur-[100px] pointer-events-none" />
+    <div className="absolute bottom-0 left-0 right-0 gradient-divider" />
 
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -21,19 +19,19 @@ const PageHero = ({ title, breadcrumb }: Props) => (
       transition={{ duration: 0.6 }}
       className="text-center z-10"
     >
-      <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground mb-4 font-heading">
+      <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mb-4 font-heading">
         {breadcrumb.map((b, i) => (
           <span key={i} className="flex items-center gap-2">
-            {i > 0 && <ChevronRight size={14} />}
+            {i > 0 && <ChevronRight size={12} />}
             {b.to ? (
               <Link to={b.to} className="hover:text-primary transition-colors">{b.label}</Link>
             ) : (
-              <span className="text-secondary">{b.label}</span>
+              <span className="text-primary">{b.label}</span>
             )}
           </span>
         ))}
       </div>
-      <h1 className="font-display text-5xl md:text-7xl font-bold tracking-wide">{title}</h1>
+      <h1 className="font-display text-5xl md:text-7xl font-bold tracking-tight gradient-text">{title}</h1>
     </motion.div>
   </section>
 );
