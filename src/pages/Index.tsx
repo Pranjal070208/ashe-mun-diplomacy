@@ -275,6 +275,7 @@ const Index = () => {
           </div>
         </div>
       </section>
+      <RegistrationModal open={showRegistration} onClose={() => setShowRegistration(false)} />
     </PageTransition>
   );
 };
