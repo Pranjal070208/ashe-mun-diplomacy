@@ -88,6 +88,7 @@ function Counter({ target, suffix }: { target: number; suffix: string }) {
 
 const Index = () => {
   const location = useLocation();
+  const [showRegistration, setShowRegistration] = useState(false);
 
   useEffect(() => {
     if (location.hash === "#contact") {
@@ -126,12 +127,12 @@ const Index = () => {
             August 15–17, 2026
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              to="/#contact"
+            <button
+              onClick={() => setShowRegistration(true)}
               className="font-heading text-sm px-8 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:shadow-[0_0_40px_hsl(190_80%_55%/0.3)] transition-all duration-300 hover:scale-105"
             >
               Register Now
-            </Link>
+            </button>
             <Link
               to="/about"
               className="font-heading text-sm px-8 py-3.5 rounded-full border border-border text-foreground hover:border-primary/50 hover:text-primary transition-all duration-300"
