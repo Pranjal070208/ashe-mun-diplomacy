@@ -6,6 +6,7 @@ import ParticleBackground from "@/components/ParticleBackground";
 import AnimatedSection from "@/components/AnimatedSection";
 import Marquee from "@/components/Marquee";
 import PageTransition from "@/components/PageTransition";
+import RegistrationModal from "@/components/RegistrationModal";
 
 const features = [
   { icon: Globe, title: "Global Network", desc: "Connect with delegates from institutions across the nation and build lasting relationships." },
