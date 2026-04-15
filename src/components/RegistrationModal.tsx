@@ -25,7 +25,7 @@ declare global {
   }
 }
 
-const RAZORPAY_KEY = ""; // TODO: Add your Razorpay Key ID here
+const RAZORPAY_KEY = "rzp_live_Sdjq0W15ZVeiHg";
 
 const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
   const [form, setForm] = useState({
@@ -72,7 +72,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
 
     const options = {
       key: RAZORPAY_KEY,
-      amount: 50000, // Amount in paise (₹500)
+      amount: 1000, // ₹10 in paise
       currency: "INR",
       name: "Ashe MUN 2026",
       description: "Conference Registration Fee",
