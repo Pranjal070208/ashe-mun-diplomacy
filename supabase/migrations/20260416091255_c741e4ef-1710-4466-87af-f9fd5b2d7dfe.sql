@@ -1,0 +1,1 @@
+DROP POLICY "Allow anonymous select" ON public.registrations;

@@ -2,9 +2,6 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Lock, LogOut, RefreshCw } from "lucide-react";
 
-const ADMIN_USERNAME = "ASAdmin";
-const ADMIN_PASSWORD = "20@AdminAS@26";
-
 interface Registration {
   id: string;
   name: string;
@@ -26,33 +23,41 @@ const Admin = () => {
   const [authenticated, setAuthenticated] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [storedCreds, setStoredCreds] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [loading, setLoading] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-      setAuthenticated(true);
-      setError("");
-    } else {
-      setError("Invalid credentials");
-    }
+    // Store creds for edge function calls
+    setStoredCreds({ username, password });
+    setAuthenticated(true);
+    setError("");
   };
 
   const fetchRegistrations = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("registrations")
-      .select("*")
-      .order("paid_at", { ascending: false });
-    if (!error && data) setRegistrations(data as Registration[]);
+    try {
+      const { data, error } = await supabase.functions.invoke("get-registrations", {
+        body: { username: storedCreds.username, password: storedCreds.password },
+      });
+      if (error) throw error;
+      if (data?.error === "Unauthorized") {
+        setAuthenticated(false);
+        setError("Invalid credentials");
+        return;
+      }
+      if (data?.data) setRegistrations(data.data as Registration[]);
+    } catch (err) {
+      console.error("Failed to fetch registrations:", err);
+    }
     setLoading(false);
   };
 
   useEffect(() => {
-    if (authenticated) fetchRegistrations();
-  }, [authenticated]);
+    if (authenticated && storedCreds.username) fetchRegistrations();
+  }, [authenticated, storedCreds]);
 
   if (!authenticated) {
     return (
