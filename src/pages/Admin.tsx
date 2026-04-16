@@ -42,11 +42,15 @@ const Admin = () => {
       const { data, error } = await supabase.functions.invoke("get-registrations", {
         body: { username: storedCreds.username, password: storedCreds.password },
       });
-      if (error) throw error;
-      if (data?.error === "Unauthorized") {
-        setAuthenticated(false);
-        setError("Invalid credentials");
-        return;
+      if (error) {
+        // Check if it's a 401 unauthorized
+        if (error.message?.includes("non-2xx")) {
+          setAuthenticated(false);
+          setError("Invalid credentials");
+          setLoading(false);
+          return;
+        }
+        throw error;
       }
       if (data?.data) setRegistrations(data.data as Registration[]);
     } catch (err) {
