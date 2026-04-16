@@ -50,8 +50,10 @@ const emptyDelegate = (): DelegateForm => ({
   experience: "",
 });
 
+const isMobileValid = (mobile: string) => /^\d{10}$/.test(mobile);
+
 const isDelegateValid = (d: DelegateForm) =>
-  d.name.trim() && d.mobile.trim() && d.email.trim() && d.class.trim() && d.pref1 && d.pref2 && d.pref3;
+  d.name.trim() && isMobileValid(d.mobile) && d.email.trim() && d.class.trim() && d.pref1 && d.pref2 && d.pref3;
 
 const getAvailableCommittees = (exclude: string[]) =>
   committees.filter((c) => !exclude.includes(c));
@@ -119,7 +121,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
   };
 
   const isIndividualValid =
-    form.name.trim() && form.mobile.trim() && form.email.trim() && form.school.trim() && form.class.trim() && form.pref1 && form.pref2 && form.pref3;
+    form.name.trim() && isMobileValid(form.mobile) && form.email.trim() && form.school.trim() && form.class.trim() && form.pref1 && form.pref2 && form.pref3;
 
   const completedDelegates = delegates.filter(isDelegateValid).length;
   const isSchoolValid = schoolName.trim() && completedDelegates === delegates.length;
@@ -310,7 +312,8 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
             {mode === "individual" && (
               <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); handlePayNow(); }}>
                 <input type="text" placeholder="Name" value={form.name} onChange={(e) => update("name", e.target.value)} className={inputClass} required />
-                <input type="tel" placeholder="Mobile Number" value={form.mobile} onChange={(e) => update("mobile", e.target.value)} className={inputClass} required />
+                <input type="tel" placeholder="Mobile Number" value={form.mobile} onChange={(e) => { const v = e.target.value.replace(/\D/g, "").slice(0, 10); update("mobile", v); }} className={inputClass} required maxLength={10} pattern="\d{10}" />
+                {form.mobile && !isMobileValid(form.mobile) && <p className="text-xs text-red-400 -mt-1">Enter exactly 10 digits</p>}
                 <input type="email" placeholder="Email" value={form.email} onChange={(e) => update("email", e.target.value)} className={inputClass} required />
                 <input type="text" placeholder="School" value={form.school} onChange={(e) => update("school", e.target.value)} className={inputClass} required />
                 <input type="text" placeholder="Class" value={form.class} onChange={(e) => update("class", e.target.value)} className={inputClass} required />
@@ -392,7 +395,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
                               <div className="px-4 pb-4 space-y-2">
                                 <input type="text" placeholder="Name" value={d.name} onChange={(e) => updateDelegate(i, "name", e.target.value)} className={inputClass} />
                                 <div className="grid grid-cols-2 gap-2">
-                                  <input type="tel" placeholder="Mobile" value={d.mobile} onChange={(e) => updateDelegate(i, "mobile", e.target.value)} className={inputClass} />
+                                  <input type="tel" placeholder="Mobile" value={d.mobile} onChange={(e) => { const v = e.target.value.replace(/\D/g, "").slice(0, 10); updateDelegate(i, "mobile", v); }} className={inputClass} maxLength={10} />
                                   <input type="email" placeholder="Email" value={d.email} onChange={(e) => updateDelegate(i, "email", e.target.value)} className={inputClass} />
                                 </div>
                                 <input type="text" placeholder="Class" value={d.class} onChange={(e) => updateDelegate(i, "class", e.target.value)} className={inputClass} />
