@@ -1,50 +1,46 @@
 
 
-## Plan: Registration Database + Admin Dashboard
+## Plan: Two Registration Categories — Individual & School Delegation
 
-### 1. Create `registrations` table (SQL migration)
+### Overview
+Add a category selector at the top of the registration modal. **Individual Delegation** keeps the current single-delegate form. **School Delegation** collects a shared school name + details for 10–20 delegates, each with their own name, mobile, email, class, 3 committee preferences, and experience. Fee = ₹10 per delegate.
 
-```sql
-CREATE TABLE public.registrations (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name TEXT NOT NULL,
-  mobile TEXT NOT NULL,
-  email TEXT NOT NULL,
-  school TEXT NOT NULL,
-  class TEXT NOT NULL,
-  preference_1 TEXT NOT NULL,
-  preference_2 TEXT NOT NULL,
-  preference_3 TEXT NOT NULL,
-  experience TEXT,
-  razorpay_payment_id TEXT,
-  amount_paid INTEGER NOT NULL DEFAULT 1000,
-  paid_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+### Database Change
+Add a new column to the `registrations` table:
+- `delegation_type TEXT NOT NULL DEFAULT 'individual'` — values: `'individual'` or `'school'`
+- `delegation_group_id UUID` — nullable; for school delegations, all delegates in the same submission share the same group UUID so they can be linked together in the admin view.
 
--- Allow anonymous inserts (registration happens without auth)
-ALTER TABLE public.registrations ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Allow anonymous inserts" ON public.registrations FOR INSERT WITH CHECK (true);
--- Select policy for reading (will be used via service role in edge function, but also allow anon for simplicity since admin is client-side gated)
-CREATE POLICY "Allow anonymous select" ON public.registrations FOR SELECT USING (true);
-```
+No new table needed — each delegate is still one row, tagged with type and group.
 
-### 2. Update `RegistrationModal.tsx`
+### Frontend Changes
 
-After successful Razorpay payment (inside `handler`), insert a row into `registrations` table with form data + `razorpay_payment_id` + timestamp.
+**1. `src/components/RegistrationModal.tsx` — Major rewrite**
 
-### 3. Create `/admin` page
+- Add a **category toggle** (two styled tabs/buttons) at the top: "Individual Delegation" / "School Delegation". Default: Individual.
+- **Individual mode**: identical to current form (no changes).
+- **School Delegation mode**:
+  - Top section: School Name (shared across all delegates).
+  - Delegate list: start with 10 empty delegate cards. Each card has: Name, Mobile, Email, Class, Pref 1/2/3, Experience.
+  - "Add Delegate" button (up to 20). "Remove" button on cards beyond the 10th.
+  - Each delegate card is a compact, collapsible accordion-style row showing delegate number + name (once filled). Expand to edit fields. This keeps the form navigable.
+  - **Running total** displayed at the bottom: `{count} delegates × ₹10 = ₹{count * 10}`.
+  - On submit: validate all delegates have required fields filled. Open Razorpay with `amount = count * 1000` (paise). On success, insert all delegates as separate rows sharing the same `delegation_group_id` UUID and `delegation_type = 'school'`.
 
-- Simple login gate: username/password form (client-side check against hardcoded `ASAdmin` / `20@AdminAS@26`)
-- Once authenticated (stored in React state), show a table of all registrations fetched from Supabase
-- Columns: Name, Mobile, Email, School, Class, Pref 1/2/3, Experience, Payment ID, Paid At
-- No Navbar/Footer on this page for a clean admin feel
+**2. `src/pages/Admin.tsx` — Minor updates**
+- Add "Type" column to the table showing Individual/School.
+- Add "Group" column (short UUID or dash for individuals).
+- Update XLSX export to include these columns.
 
-### 4. Add route in `App.tsx`
+**3. Edge function `get-registrations/index.ts`** — no changes needed (it returns all rows).
 
-Add `<Route path="/admin" element={<Admin />} />` to the router.
+### UX Design for School Delegation Form
+- Accordion pattern: delegates are numbered cards (Delegate 1, Delegate 2, …). Only one expanded at a time.
+- Progress indicator: "8/10 delegates completed" with a progress bar.
+- The school name field is pinned at the top outside the accordion.
+- Submit button shows the total amount and is disabled until all delegates (min 10) have required fields filled.
 
-### Security Note
-
-The admin page uses a simple client-side password gate — not true server-side authentication. The registration data in the table is publicly readable. This is a simple setup suitable for a small event. If you need stronger security later, we can add proper Supabase auth.
+### Technical Details
+- Generate `delegation_group_id` client-side with `crypto.randomUUID()`.
+- Insert all delegates in a single `.insert([...rows])` call after payment.
+- Amount in paise: `delegates.length * 1000`.
 
