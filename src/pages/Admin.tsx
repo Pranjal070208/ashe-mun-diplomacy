@@ -17,6 +17,8 @@ interface Registration {
   amount_paid: number;
   paid_at: string;
   created_at: string;
+  delegation_type: string;
+  delegation_group_id: string | null;
 }
 
 const Admin = () => {
