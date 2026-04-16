@@ -96,6 +96,7 @@ const Admin = () => {
           {error && <p className="text-sm text-destructive">{error}</p>}
           <input
             type="text"
+            name="username"
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -103,6 +104,7 @@ const Admin = () => {
           />
           <input
             type="password"
+            name="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
