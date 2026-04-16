@@ -34,7 +34,7 @@ export type Database = {
           school: string
         }
         Insert: {
-          amount_paid?: number
+          amount_paid: number
           class: string
           created_at?: string
           delegation_group_id?: string | null

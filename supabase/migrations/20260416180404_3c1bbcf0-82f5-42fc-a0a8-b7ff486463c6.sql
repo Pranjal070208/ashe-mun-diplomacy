@@ -1,0 +1,1 @@
+ALTER TABLE public.registrations ALTER COLUMN amount_paid DROP DEFAULT;

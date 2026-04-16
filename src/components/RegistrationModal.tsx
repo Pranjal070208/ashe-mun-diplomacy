@@ -126,7 +126,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
   const completedDelegates = delegates.filter(isDelegateValid).length;
   const isSchoolValid = schoolName.trim() && completedDelegates === delegates.length;
 
-  const handlePayNow = () => {
+  const handlePayNow = async () => {
     if (mode === "individual" && !isIndividualValid) {
       toast.error("Please fill all fields before proceeding.");
       return;
@@ -135,16 +135,36 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
       toast.error(`Please complete all ${delegates.length} delegate forms.`);
       return;
     }
-    if (!RAZORPAY_KEY) {
-      toast.error("Payment gateway is not configured yet.");
-      return;
-    }
 
     setLoading(true);
     const amount = mode === "individual" ? 1000 : delegates.length * 1000;
 
+    // Create a Razorpay order on the server (auto-capture enabled).
+    let orderId: string;
+    let orderKey: string;
+    try {
+      const { data, error } = await supabase.functions.invoke("create-razorpay-order", {
+        body: {
+          amount,
+          currency: "INR",
+          receipt: `mun_${Date.now()}`,
+          notes: { mode, delegates: String(mode === "school" ? delegates.length : 1) },
+        },
+      });
+      if (error) throw error;
+      if (!data?.order_id) throw new Error("No order_id returned");
+      orderId = data.order_id;
+      orderKey = data.key_id || RAZORPAY_KEY;
+    } catch (err) {
+      console.error("Order creation failed:", err);
+      toast.error("Could not initiate payment. Please try again.");
+      setLoading(false);
+      return;
+    }
+
     const options = {
-      key: RAZORPAY_KEY,
+      key: orderKey,
+      order_id: orderId,
       amount,
       currency: "INR",
       name: "Ashe MUN 2026",
@@ -167,13 +187,14 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
               preference_3: form.pref3,
               experience: form.experience || null,
               razorpay_payment_id: response.razorpay_payment_id,
-              amount_paid: 1000,
+              amount_paid: amount,
               paid_at: new Date().toISOString(),
               delegation_type: "individual",
             });
             if (error) throw error;
           } else {
             const groupId = crypto.randomUUID();
+            const perDelegate = Math.floor(amount / delegates.length);
             const rows = delegates.map((d) => ({
               name: d.name,
               mobile: d.mobile,
@@ -185,7 +206,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
               preference_3: d.pref3,
               experience: d.experience || null,
               razorpay_payment_id: response.razorpay_payment_id,
-              amount_paid: 1000,
+              amount_paid: perDelegate,
               paid_at: new Date().toISOString(),
               delegation_type: "school",
               delegation_group_id: groupId,
