@@ -17,6 +17,8 @@ interface Registration {
   amount_paid: number;
   paid_at: string;
   created_at: string;
+  delegation_type: string;
+  delegation_group_id: string | null;
 }
 
 const Admin = () => {
@@ -91,6 +93,8 @@ const Admin = () => {
     if (registrations.length === 0) return;
     const data = registrations.map((r, i) => ({
       "#": i + 1,
+      Type: r.delegation_type === "school" ? "School" : "Individual",
+      Group: r.delegation_group_id ? r.delegation_group_id.slice(0, 8) : "—",
       Name: r.name,
       Mobile: r.mobile,
       Email: r.email,
@@ -181,7 +185,7 @@ const Admin = () => {
         <table className="w-full text-sm text-foreground">
           <thead className="bg-card border-b border-border">
             <tr>
-              {["#", "Name", "Mobile", "Email", "School", "Class", "Pref 1", "Pref 2", "Pref 3", "Experience", "Payment ID", "Paid At"].map((h) => (
+              {["#", "Type", "Group", "Name", "Mobile", "Email", "School", "Class", "Pref 1", "Pref 2", "Pref 3", "Experience", "Payment ID", "Paid At"].map((h) => (
                 <th key={h} className="px-4 py-3 text-left text-xs font-heading uppercase tracking-wider text-muted-foreground whitespace-nowrap">
                   {h}
                 </th>
@@ -192,6 +196,12 @@ const Admin = () => {
             {registrations.map((r, i) => (
               <tr key={r.id} className="border-b border-border/50 hover:bg-card/50 transition">
                 <td className="px-4 py-3 text-muted-foreground">{i + 1}</td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${r.delegation_type === "school" ? "bg-secondary/20 text-secondary" : "bg-primary/20 text-primary"}`}>
+                    {r.delegation_type === "school" ? "School" : "Individual"}
+                  </span>
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap font-mono text-xs text-muted-foreground">{r.delegation_group_id ? r.delegation_group_id.slice(0, 8) : "—"}</td>
                 <td className="px-4 py-3 whitespace-nowrap">{r.name}</td>
                 <td className="px-4 py-3 whitespace-nowrap">{r.mobile}</td>
                 <td className="px-4 py-3 whitespace-nowrap">{r.email}</td>
@@ -209,7 +219,7 @@ const Admin = () => {
             ))}
             {registrations.length === 0 && (
               <tr>
-                <td colSpan={12} className="px-4 py-8 text-center text-muted-foreground">
+                <td colSpan={14} className="px-4 py-8 text-center text-muted-foreground">
                   No registrations yet.
                 </td>
               </tr>

@@ -19,6 +19,8 @@ export type Database = {
           amount_paid: number
           class: string
           created_at: string
+          delegation_group_id: string | null
+          delegation_type: string
           email: string
           experience: string | null
           id: string
@@ -35,6 +37,8 @@ export type Database = {
           amount_paid?: number
           class: string
           created_at?: string
+          delegation_group_id?: string | null
+          delegation_type?: string
           email: string
           experience?: string | null
           id?: string
@@ -51,6 +55,8 @@ export type Database = {
           amount_paid?: number
           class?: string
           created_at?: string
+          delegation_group_id?: string | null
+          delegation_type?: string
           email?: string
           experience?: string | null
           id?: string
