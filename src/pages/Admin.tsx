@@ -28,12 +28,17 @@ const Admin = () => {
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const formData = new FormData(e.currentTarget);
+    const submittedUsername = String(formData.get("username") ?? "").trim();
+    const submittedPassword = String(formData.get("password") ?? "");
+
     setLoading(true);
-    const success = await fetchRegistrations(username, password);
+    const success = await fetchRegistrations(submittedUsername, submittedPassword);
     if (success) {
-      setStoredCreds({ username, password });
+      setStoredCreds({ username: submittedUsername, password: submittedPassword });
       setAuthenticated(true);
       setError("");
     } else {
@@ -91,6 +96,7 @@ const Admin = () => {
           {error && <p className="text-sm text-destructive">{error}</p>}
           <input
             type="text"
+            name="username"
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -98,6 +104,7 @@ const Admin = () => {
           />
           <input
             type="password"
+            name="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
