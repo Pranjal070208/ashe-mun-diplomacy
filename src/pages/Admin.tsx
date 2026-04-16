@@ -203,7 +203,7 @@ const Admin = () => {
                 <td className="px-4 py-3 max-w-[200px] truncate">{r.experience || "—"}</td>
                 <td className="px-4 py-3 whitespace-nowrap font-mono text-xs">{r.razorpay_payment_id || "—"}</td>
                 <td className="px-4 py-3 whitespace-nowrap text-xs">
-                  {new Date(r.paid_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
+                  {new Date(r.paid_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "medium" })}
                 </td>
               </tr>
             ))}
