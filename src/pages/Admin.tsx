@@ -1,6 +1,6 @@
 import { useState } from "react";
-
-import { Lock, LogOut, RefreshCw } from "lucide-react";
+import { Lock, LogOut, RefreshCw, Download } from "lucide-react";
+import * as XLSX from "xlsx";
 
 interface Registration {
   id: string;
@@ -87,6 +87,28 @@ const Admin = () => {
     setLoading(false);
   };
 
+  const handleDownload = () => {
+    if (registrations.length === 0) return;
+    const data = registrations.map((r, i) => ({
+      "#": i + 1,
+      Name: r.name,
+      Mobile: r.mobile,
+      Email: r.email,
+      School: r.school,
+      Class: r.class,
+      "Preference 1": r.preference_1,
+      "Preference 2": r.preference_2,
+      "Preference 3": r.preference_3,
+      Experience: r.experience || "",
+      "Payment ID": r.razorpay_payment_id || "",
+      "Paid At": new Date(r.paid_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "medium" }),
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Registrations");
+    XLSX.writeFile(wb, `registrations_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  };
+
   if (!authenticated) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -140,6 +162,13 @@ const Admin = () => {
             <RefreshCw size={14} className={loading ? "animate-spin" : ""} /> Refresh
           </button>
           <button
+            onClick={handleDownload}
+            disabled={registrations.length === 0}
+            className="px-4 py-2 rounded-xl bg-card border border-border text-foreground text-sm flex items-center gap-2 hover:bg-muted transition disabled:opacity-50"
+          >
+            <Download size={14} /> Export XLSX
+          </button>
+          <button
             onClick={() => setAuthenticated(false)}
             className="px-4 py-2 rounded-xl bg-card border border-border text-foreground text-sm flex items-center gap-2 hover:bg-muted transition"
           >
@@ -174,7 +203,7 @@ const Admin = () => {
                 <td className="px-4 py-3 max-w-[200px] truncate">{r.experience || "—"}</td>
                 <td className="px-4 py-3 whitespace-nowrap font-mono text-xs">{r.razorpay_payment_id || "—"}</td>
                 <td className="px-4 py-3 whitespace-nowrap text-xs">
-                  {new Date(r.paid_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" })}
+                  {new Date(r.paid_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "medium" })}
                 </td>
               </tr>
             ))}
