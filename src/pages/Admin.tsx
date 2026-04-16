@@ -1,6 +1,6 @@
 import { useState } from "react";
-
-import { Lock, LogOut, RefreshCw } from "lucide-react";
+import { Lock, LogOut, RefreshCw, Download } from "lucide-react";
+import * as XLSX from "xlsx";
 
 interface Registration {
   id: string;
