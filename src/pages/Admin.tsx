@@ -122,7 +122,7 @@ const Admin = () => {
         </h1>
         <div className="flex gap-2">
           <button
-            onClick={fetchRegistrations}
+            onClick={handleRefresh}
             className="px-4 py-2 rounded-xl bg-card border border-border text-foreground text-sm flex items-center gap-2 hover:bg-muted transition"
           >
             <RefreshCw size={14} className={loading ? "animate-spin" : ""} /> Refresh
