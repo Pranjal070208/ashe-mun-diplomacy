@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
+
 import { Lock, LogOut, RefreshCw } from "lucide-react";
 
 interface Registration {
