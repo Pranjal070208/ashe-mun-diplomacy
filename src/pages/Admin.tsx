@@ -144,13 +144,7 @@ const Admin = () => {
             Login
           </button>
         </form>
-          <button
-            onClick={handleDownload}
-            disabled={registrations.length === 0}
-            className="px-4 py-2 rounded-xl bg-card border border-border text-foreground text-sm flex items-center gap-2 hover:bg-muted transition disabled:opacity-50"
-          >
-            <Download size={14} /> Export XLSX
-          </button>
+      </div>
     );
   }
 
