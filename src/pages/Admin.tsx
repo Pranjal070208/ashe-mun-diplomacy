@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
+
 import { Lock, LogOut, RefreshCw } from "lucide-react";
 
 interface Registration {
@@ -28,40 +28,54 @@ const Admin = () => {
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Store creds for edge function calls
-    setStoredCreds({ username, password });
-    setAuthenticated(true);
-    setError("");
-  };
-
-  const fetchRegistrations = async () => {
     setLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("get-registrations", {
-        body: { username: storedCreds.username, password: storedCreds.password },
-      });
-      if (error) {
-        // Check if it's a 401 unauthorized
-        if (error.message?.includes("non-2xx")) {
-          setAuthenticated(false);
-          setError("Invalid credentials");
-          setLoading(false);
-          return;
-        }
-        throw error;
-      }
-      if (data?.data) setRegistrations(data.data as Registration[]);
-    } catch (err) {
-      console.error("Failed to fetch registrations:", err);
+    const success = await fetchRegistrations(username, password);
+    if (success) {
+      setStoredCreds({ username, password });
+      setAuthenticated(true);
+      setError("");
+    } else {
+      setError("Invalid credentials");
     }
     setLoading(false);
   };
 
-  useEffect(() => {
-    if (authenticated && storedCreds.username) fetchRegistrations();
-  }, [authenticated, storedCreds]);
+  const fetchRegistrations = async (user?: string, pass?: string): Promise<boolean> => {
+    const u = user || storedCreds.username;
+    const p = pass || storedCreds.password;
+    if (!u || !p) return false;
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-registrations`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: JSON.stringify({ username: u, password: p }),
+        }
+      );
+
+      if (response.status === 401) return false;
+
+      const result = await response.json();
+      if (result?.data) setRegistrations(result.data as Registration[]);
+      return true;
+    } catch (err) {
+      console.error("Failed to fetch registrations:", err);
+      return false;
+    }
+  };
+
+  const handleRefresh = async () => {
+    setLoading(true);
+    await fetchRegistrations();
+    setLoading(false);
+  };
 
   if (!authenticated) {
     return (
@@ -108,7 +122,7 @@ const Admin = () => {
         </h1>
         <div className="flex gap-2">
           <button
-            onClick={fetchRegistrations}
+            onClick={handleRefresh}
             className="px-4 py-2 rounded-xl bg-card border border-border text-foreground text-sm flex items-center gap-2 hover:bg-muted transition"
           >
             <RefreshCw size={14} className={loading ? "animate-spin" : ""} /> Refresh
