@@ -219,7 +219,7 @@ const Admin = () => {
             ))}
             {registrations.length === 0 && (
               <tr>
-                <td colSpan={12} className="px-4 py-8 text-center text-muted-foreground">
+                <td colSpan={14} className="px-4 py-8 text-center text-muted-foreground">
                   No registrations yet.
                 </td>
               </tr>
