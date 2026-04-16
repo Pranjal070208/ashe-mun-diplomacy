@@ -87,6 +87,28 @@ const Admin = () => {
     setLoading(false);
   };
 
+  const handleDownload = () => {
+    if (registrations.length === 0) return;
+    const data = registrations.map((r, i) => ({
+      "#": i + 1,
+      Name: r.name,
+      Mobile: r.mobile,
+      Email: r.email,
+      School: r.school,
+      Class: r.class,
+      "Preference 1": r.preference_1,
+      "Preference 2": r.preference_2,
+      "Preference 3": r.preference_3,
+      Experience: r.experience || "",
+      "Payment ID": r.razorpay_payment_id || "",
+      "Paid At": new Date(r.paid_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "medium" }),
+    }));
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Registrations");
+    XLSX.writeFile(wb, `registrations_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  };
+
   if (!authenticated) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
