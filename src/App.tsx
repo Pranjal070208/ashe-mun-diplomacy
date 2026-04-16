@@ -2,7 +2,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Analytics } from "@vercel/analytics/react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import RegistrationModal from "@/components/RegistrationModal";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -43,6 +44,7 @@ function AnimatedRoutes() {
 function AppLayout() {
   const location = useLocation();
   const isAdmin = location.pathname === "/admin";
+  const [showRegistration, setShowRegistration] = useState(false);
 
   if (isAdmin) {
     return (
@@ -56,11 +58,12 @@ function AppLayout() {
   return (
     <>
       <ScrollToTop />
-      <Navbar />
+      <Navbar onRegisterClick={() => setShowRegistration(true)} />
       <main>
         <AnimatedRoutes />
       </main>
       <Footer />
+      <RegistrationModal open={showRegistration} onClose={() => setShowRegistration(false)} />
     </>
   );
 }

@@ -11,7 +11,7 @@ const navLinks = [
   { label: "Contact", to: "/#contact" },
 ];
 
-const Navbar = () => {
+const Navbar = ({ onRegisterClick }: { onRegisterClick?: () => void }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
@@ -64,13 +64,12 @@ const Navbar = () => {
             </div>
           </div>
 
-          <Link
-            to="/#contact"
-            onClick={handleContactClick}
+          <button
+            onClick={onRegisterClick}
             className="hidden md:inline-flex font-heading text-xs px-5 py-2.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:shadow-[0_0_30px_hsl(190_80%_55%/0.3)] hover:scale-105 transition-all duration-300"
           >
             Register Now
-          </Link>
+          </button>
 
           <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden text-foreground">
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
@@ -96,13 +95,12 @@ const Navbar = () => {
                 {l.label}
               </Link>
             ))}
-            <Link
-              to="/#contact"
-              onClick={handleContactClick}
+            <button
+              onClick={onRegisterClick}
               className="font-heading text-sm px-6 py-3 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold"
             >
               Register Now
-            </Link>
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
