@@ -12,6 +12,7 @@ import Index from "./pages/Index";
 import About from "./pages/About";
 import Committees from "./pages/Committees";
 import Gallery from "./pages/Gallery";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,18 +40,38 @@ function AnimatedRoutes() {
   );
 }
 
+function AppLayout() {
+  const location = useLocation();
+  const isAdmin = location.pathname === "/admin";
+
+  if (isAdmin) {
+    return (
+      <>
+        <ScrollToTop />
+        <Admin />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <ScrollToTop />
+      <Navbar />
+      <main>
+        <AnimatedRoutes />
+      </main>
+      <Footer />
+    </>
+  );
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <ScrollToTop />
-        <Navbar />
-        <main>
-          <AnimatedRoutes />
-        </main>
-        <Footer />
+        <AppLayout />
       </BrowserRouter>
       <Analytics />
     </TooltipProvider>

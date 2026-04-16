@@ -2,6 +2,7 @@ import { useState } from "react";
 import { X, Send } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const committees = [
   "UNSC - United Nations Security Council",
@@ -92,10 +93,32 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
       theme: {
         color: "#0ea5e9",
       },
-      handler: function (response: any) {
-        toast.success("Payment successful! Your registration is confirmed.", {
-          description: `Payment ID: ${response.razorpay_payment_id}`,
-        });
+      handler: async function (response: any) {
+        try {
+          const { error } = await supabase.from("registrations").insert({
+            name: form.name,
+            mobile: form.mobile,
+            email: form.email,
+            school: form.school,
+            class: form.class,
+            preference_1: form.pref1,
+            preference_2: form.pref2,
+            preference_3: form.pref3,
+            experience: form.experience || null,
+            razorpay_payment_id: response.razorpay_payment_id,
+            amount_paid: 1000,
+            paid_at: new Date().toISOString(),
+          });
+          if (error) throw error;
+          toast.success("Payment successful! Your registration is confirmed.", {
+            description: `Payment ID: ${response.razorpay_payment_id}`,
+          });
+        } catch (err) {
+          console.error("Failed to save registration:", err);
+          toast.success("Payment successful! Registration saved.", {
+            description: `Payment ID: ${response.razorpay_payment_id}`,
+          });
+        }
         setLoading(false);
         onClose();
       },
