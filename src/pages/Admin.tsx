@@ -93,6 +93,8 @@ const Admin = () => {
     if (registrations.length === 0) return;
     const data = registrations.map((r, i) => ({
       "#": i + 1,
+      Type: r.delegation_type === "school" ? "School" : "Individual",
+      Group: r.delegation_group_id ? r.delegation_group_id.slice(0, 8) : "—",
       Name: r.name,
       Mobile: r.mobile,
       Email: r.email,
