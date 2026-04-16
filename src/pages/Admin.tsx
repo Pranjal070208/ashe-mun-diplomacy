@@ -65,13 +65,18 @@ const Admin = () => {
         }
       );
 
-      if (response.status === 401) return false;
-
       const result = await response.json();
-      if (result?.data) setRegistrations(result.data as Registration[]);
+
+      if (!response.ok || result?.success === false) {
+        setRegistrations([]);
+        return false;
+      }
+
+      setRegistrations((result?.data as Registration[]) ?? []);
       return true;
     } catch (err) {
       console.error("Failed to fetch registrations:", err);
+      setRegistrations([]);
       return false;
     }
   };

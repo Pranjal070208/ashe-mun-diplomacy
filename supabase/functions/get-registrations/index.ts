@@ -17,8 +17,7 @@ Deno.serve(async (req) => {
     const { username, password } = await req.json();
 
     if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
+      return new Response(JSON.stringify({ success: false, error: "Unauthorized", data: [] }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -35,7 +34,7 @@ Deno.serve(async (req) => {
 
     if (error) throw error;
 
-    return new Response(JSON.stringify({ data }), {
+    return new Response(JSON.stringify({ success: true, data }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
