@@ -12,6 +12,7 @@ import Index from "./pages/Index";
 import About from "./pages/About";
 import Committees from "./pages/Committees";
 import Gallery from "./pages/Gallery";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
