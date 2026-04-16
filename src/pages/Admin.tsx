@@ -185,7 +185,7 @@ const Admin = () => {
         <table className="w-full text-sm text-foreground">
           <thead className="bg-card border-b border-border">
             <tr>
-              {["#", "Name", "Mobile", "Email", "School", "Class", "Pref 1", "Pref 2", "Pref 3", "Experience", "Payment ID", "Paid At"].map((h) => (
+              {["#", "Type", "Group", "Name", "Mobile", "Email", "School", "Class", "Pref 1", "Pref 2", "Pref 3", "Experience", "Payment ID", "Paid At"].map((h) => (
                 <th key={h} className="px-4 py-3 text-left text-xs font-heading uppercase tracking-wider text-muted-foreground whitespace-nowrap">
                   {h}
                 </th>
