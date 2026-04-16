@@ -34,10 +34,34 @@ function AnimatedRoutes() {
         <Route path="/about" element={<About />} />
         <Route path="/committees" element={<Committees />} />
         <Route path="/gallery" element={<Gallery />} />
-        <Route path="/admin" element={<Admin />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>
+  );
+}
+
+function AppLayout() {
+  const location = useLocation();
+  const isAdmin = location.pathname === "/admin";
+
+  if (isAdmin) {
+    return (
+      <>
+        <ScrollToTop />
+        <Admin />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <ScrollToTop />
+      <Navbar />
+      <main>
+        <AnimatedRoutes />
+      </main>
+      <Footer />
+    </>
   );
 }
 
@@ -47,12 +71,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <ScrollToTop />
-        <Navbar />
-        <main>
-          <AnimatedRoutes />
-        </main>
-        <Footer />
+        <AppLayout />
       </BrowserRouter>
       <Analytics />
     </TooltipProvider>
