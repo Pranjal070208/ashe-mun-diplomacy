@@ -196,6 +196,12 @@ const Admin = () => {
             {registrations.map((r, i) => (
               <tr key={r.id} className="border-b border-border/50 hover:bg-card/50 transition">
                 <td className="px-4 py-3 text-muted-foreground">{i + 1}</td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${r.delegation_type === "school" ? "bg-secondary/20 text-secondary" : "bg-primary/20 text-primary"}`}>
+                    {r.delegation_type === "school" ? "School" : "Individual"}
+                  </span>
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap font-mono text-xs text-muted-foreground">{r.delegation_group_id ? r.delegation_group_id.slice(0, 8) : "—"}</td>
                 <td className="px-4 py-3 whitespace-nowrap">{r.name}</td>
                 <td className="px-4 py-3 whitespace-nowrap">{r.mobile}</td>
                 <td className="px-4 py-3 whitespace-nowrap">{r.email}</td>
