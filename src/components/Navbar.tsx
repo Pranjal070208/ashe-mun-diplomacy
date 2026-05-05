@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import logo from "@/assets/ashe-mun-logo.jpg";
 
 const navLinks = [
   { label: "Home", to: "/" },
@@ -40,12 +41,12 @@ const Navbar = ({ onRegisterClick }: { onRegisterClick?: () => void }) => {
           scrolled ? "bg-background/70 backdrop-blur-2xl border-b border-border" : "bg-transparent"
         }`}
       >
-        <div className="container mx-auto px-6 flex items-center justify-between h-16 md:h-20">
-          <Link to="/" className="font-display text-xl md:text-2xl font-bold tracking-tight relative gradient-text">
-            ASHE MUN
+        <div className="container mx-auto px-6 relative flex items-center justify-between h-16 md:h-20">
+          <Link to="/" className="relative z-10 flex items-center gap-2">
+            <img src={logo} alt="ASHE MUN logo" className="h-9 md:h-11 w-auto rounded-md" />
           </Link>
 
-          <div className="hidden md:flex items-center">
+          <div className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2">
             <div className="flex items-center gap-1 px-2 py-1.5 rounded-full bg-muted/50 backdrop-blur-xl border border-border">
               {navLinks.map((l) => (
                 <Link
