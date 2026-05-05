@@ -114,8 +114,8 @@ const Index = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="relative z-10 text-center px-6 max-w-4xl"
         >
-          <h1 className="font-display text-6xl md:text-[110px] font-bold tracking-tight leading-none mb-6 gradient-text">
-            Ashe MUN
+          <h1 className="font-display text-6xl font-bold tracking-tight leading-none mb-6 gradient-text md:text-3xl">
+            ASHE MUN
           </h1>
           <p className="font-body text-base md:text-lg text-muted-foreground max-w-xl mx-auto mb-8 leading-relaxed">
             Deliberate with Clarity. Debate with Passion. Deliver with Purpose.
