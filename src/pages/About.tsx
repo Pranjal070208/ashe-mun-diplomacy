@@ -3,13 +3,6 @@ import PageHero from "@/components/PageHero";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageTransition from "@/components/PageTransition";
 
-const secretariat = [
-  { name: "Alexandra Chen", role: "Secretary-General", bio: "A passionate advocate for multilateral diplomacy and youth empowerment." },
-  { name: "Daniel Okafor", role: "Deputy Secretary-General", bio: "Specializing in international security and conflict resolution." },
-  { name: "Sophia Morales", role: "Director-General", bio: "Committed to fostering inclusive dialogue and innovative committee design." },
-  { name: "James Whitfield", role: "Under-Secretary-General", bio: "Leading logistics and delegate affairs with operational excellence." },
-];
-
 const About = () => (
   <PageTransition>
     <PageHero title="About Ashe MUN" breadcrumb={[{ label: "Home", to: "/" }, { label: "About" }]} />
@@ -62,51 +55,6 @@ const About = () => (
             </AnimatedSection>
           ))}
         </div>
-      </div>
-    </section>
-
-    {/* Secretariat */}
-    <section className="py-24 relative">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 section-glow opacity-20 pointer-events-none" />
-      <div className="container mx-auto px-6">
-        <AnimatedSection className="text-center mb-16">
-          <h2 className="font-display text-3xl md:text-5xl font-bold mb-4 gradient-text">Our Secretariat</h2>
-          <div className="gradient-divider max-w-[120px] mx-auto" />
-        </AnimatedSection>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-          {secretariat.map((s, i) => (
-            <AnimatedSection key={i} delay={i * 0.1}>
-              <div className="glass-card p-6 text-center group hover:border-primary/30 hover:scale-[1.02] transition-all duration-300">
-                <div className="w-20 h-20 rounded-2xl border-2 border-primary/20 bg-card mx-auto mb-4 flex items-center justify-center">
-                  <span className="font-display text-lg text-primary/60">{s.name.split(" ").map(n => n[0]).join("")}</span>
-                </div>
-                <h4 className="font-heading font-semibold text-sm">{s.name}</h4>
-                <p className="text-primary text-xs font-heading uppercase tracking-wider mt-1 mb-3">{s.role}</p>
-                <p className="text-muted-foreground text-xs leading-relaxed font-body">{s.bio}</p>
-              </div>
-            </AnimatedSection>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    {/* Faculty Message */}
-    <section className="py-24 bg-surface">
-      <div className="container mx-auto px-6">
-        <AnimatedSection>
-          <div className="glass-card max-w-4xl mx-auto p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
-            <div className="w-28 h-28 rounded-2xl border-2 border-primary/20 bg-card flex-shrink-0 flex items-center justify-center">
-              <span className="font-display text-xl text-primary/60">FA</span>
-            </div>
-            <div>
-              <p className="font-heading text-xs uppercase tracking-[0.3em] text-primary mb-4">Faculty Advisor's Message</p>
-              <blockquote className="font-body text-base md:text-lg text-foreground/90 leading-relaxed mb-4 italic">
-                "Ashe MUN is more than an academic exercise — it is a transformative experience that challenges students to think beyond borders, negotiate with empathy, and lead with integrity. Watching our delegates grow into confident global citizens is the greatest reward of this endeavor."
-              </blockquote>
-              <p className="text-primary font-heading text-sm">— Dr. Eleanor Vance, Faculty Advisor</p>
-            </div>
-          </div>
-        </AnimatedSection>
       </div>
     </section>
   </PageTransition>
