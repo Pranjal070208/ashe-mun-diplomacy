@@ -64,13 +64,6 @@ const Navbar = ({ onRegisterClick }: { onRegisterClick?: () => void }) => {
             </div>
           </div>
 
-          <button
-            onClick={onRegisterClick}
-            className="hidden md:inline-flex font-heading text-xs px-5 py-2.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:shadow-[0_0_30px_hsl(190_80%_55%/0.3)] hover:scale-105 transition-all duration-300"
-          >
-            Register Now
-          </button>
-
           <button onClick={() => setMobileOpen(!mobileOpen)} className="md:hidden text-foreground">
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
