@@ -187,24 +187,13 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Secretary-General Message */}
+      {/* Itinerary */}
       <section className="py-24 bg-surface">
         <div className="container mx-auto px-6">
-          <AnimatedSection>
-            <div className="flex flex-col md:flex-row items-center gap-12 max-w-4xl mx-auto">
-              <div className="w-40 h-40 rounded-2xl border-2 border-primary/20 bg-card flex-shrink-0 flex items-center justify-center overflow-hidden">
-                <span className="font-display text-3xl text-muted-foreground">SG</span>
-              </div>
-              <div>
-                <p className="font-heading text-xs uppercase tracking-[0.3em] text-primary mb-4">
-                  A Message from Our Secretary-General
-                </p>
-                <blockquote className="font-body text-lg md:text-xl text-foreground/90 leading-relaxed mb-4 italic">
-                  "At Ashe MUN, we believe that the leaders of tomorrow are shaped by the conversations of today. This conference is more than a simulation — it is a crucible for the ideas, alliances, and convictions that will define our generation's response to global challenges."
-                </blockquote>
-                <p className="text-primary font-heading text-sm">— The Secretary-General, Ashe MUN 2026</p>
-              </div>
-            </div>
+          <AnimatedSection className="text-center">
+            <p className="font-heading text-xs uppercase tracking-[0.3em] text-primary mb-4">Itinerary</p>
+            <h2 className="font-display text-3xl md:text-5xl font-bold gradient-text mb-4">Coming Soon</h2>
+            <div className="gradient-divider max-w-[120px] mx-auto" />
           </AnimatedSection>
         </div>
       </section>

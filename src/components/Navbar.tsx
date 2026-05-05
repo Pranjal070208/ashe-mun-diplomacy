@@ -41,9 +41,9 @@ const Navbar = ({ onRegisterClick }: { onRegisterClick?: () => void }) => {
           scrolled ? "bg-background/70 backdrop-blur-2xl border-b border-border" : "bg-transparent"
         }`}
       >
-        <div className="container mx-auto px-6 relative flex items-center justify-between h-16 md:h-20">
+        <div className="container mx-auto px-6 relative flex items-center justify-between h-24 md:h-28">
           <Link to="/" className="relative z-10 flex items-center gap-2">
-            <img src={logo} alt="ASHE MUN logo" className="h-20 md:h-24 w-auto rounded-md" />
+            <img src={logo} alt="ASHE MUN logo" className="h-20 md:h-24 w-auto rounded-md object-contain" />
           </Link>
 
           <div className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2">
