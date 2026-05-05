@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Globe, Mic, Scale, Handshake, Mail, Phone, MapPin, Instagram, Twitter, Linkedin, Youtube, Send, Sparkles } from "lucide-react";
+import { Globe, Mic, Scale, Handshake, Mail, Phone, MapPin, Instagram, Twitter, Linkedin, Youtube, Send } from "lucide-react";
 import ParticleBackground from "@/components/ParticleBackground";
 import AnimatedSection from "@/components/AnimatedSection";
 import Marquee from "@/components/Marquee";
@@ -114,9 +114,6 @@ const Index = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="relative z-10 text-center px-6 max-w-4xl"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-body tracking-wider uppercase mb-8">
-            <Sparkles size={14} /> Model United Nations
-          </div>
           <h1 className="font-display text-6xl md:text-[110px] font-bold tracking-tight leading-none mb-6 gradient-text">
             Ashe MUN
           </h1>
