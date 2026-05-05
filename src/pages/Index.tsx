@@ -192,7 +192,7 @@ const Index = () => {
         <div className="container mx-auto px-6">
           <AnimatedSection className="text-center">
             <p className="font-heading text-xs uppercase tracking-[0.3em] text-primary mb-4">Itinerary</p>
-            <h2 className="font-display text-3xl md:text-5xl font-bold gradient-text mb-4">Coming Soon</h2>
+            <h2 className="font-display text-3xl md:text-5xl font-bold gradient-text mb-4 leading-[1.2] pb-2">Coming Soon</h2>
             <div className="gradient-divider max-w-[120px] mx-auto" />
           </AnimatedSection>
         </div>
