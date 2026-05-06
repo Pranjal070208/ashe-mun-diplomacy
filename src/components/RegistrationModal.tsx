@@ -137,7 +137,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
     }
 
     setLoading(true);
-    const amount = mode === "individual" ? 1000 : delegates.length * 1000;
+    const amount = mode === "individual" ? 400 : delegates.length * 400;
 
     // Create a Razorpay order on the server (auto-capture enabled).
     let orderId: string;
@@ -344,7 +344,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
                   <textarea placeholder="Briefly describe your MUN experience (if any)" value={form.experience} onChange={(e) => update("experience", e.target.value)} rows={3} className={`${inputClass} resize-none`} />
                 </div>
                 <button type="submit" disabled={loading} className="w-full font-heading text-sm px-6 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:shadow-[0_0_40px_hsl(190_80%_55%/0.3)] transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 mt-4">
-                  <Send size={16} /> {loading ? "Processing..." : "Pay ₹10"}
+                  <Send size={16} /> {loading ? "Processing..." : "Pay ₹4"}
                 </button>
               </form>
             )}
@@ -359,7 +359,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-xs text-muted-foreground font-heading">
                     <span>{completedDelegates}/{delegates.length} delegates completed</span>
-                    <span>{delegates.length} × ₹10 = ₹{delegates.length * 10}</span>
+                    <span>{delegates.length} × ₹4 = ₹{delegates.length * 4}</span>
                   </div>
                   <div className="w-full h-2 rounded-full bg-card border border-border overflow-hidden">
                     <div
@@ -445,7 +445,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
                   disabled={loading || !isSchoolValid}
                   className="w-full font-heading text-sm px-6 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:shadow-[0_0_40px_hsl(190_80%_55%/0.3)] transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 mt-2"
                 >
-                  <Send size={16} /> {loading ? "Processing..." : `Pay ₹${delegates.length * 10} (${delegates.length} delegates)`}
+                  <Send size={16} /> {loading ? "Processing..." : `Pay ₹${delegates.length * 4} (${delegates.length} delegates)`}
                 </button>
               </div>
             )}
