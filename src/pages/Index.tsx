@@ -117,9 +117,6 @@ const Index = () => {
           <h1 className="font-display text-6xl font-bold tracking-tight leading-none mb-6 gradient-text md:text-9xl">
             ASHE MUN
           </h1>
-          <p className="font-body text-base md:text-lg text-muted-foreground max-w-xl mx-auto mb-8 leading-relaxed">
-            Deliberate with Clarity. Debate with Passion. Deliver with Purpose.
-          </p>
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-secondary/30 text-secondary text-sm font-heading mb-10">
             August 15–17, 2026
           </div>
