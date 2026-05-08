@@ -6,6 +6,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import Marquee from "@/components/Marquee";
 import PageTransition from "@/components/PageTransition";
 import RegistrationModal from "@/components/RegistrationModal";
+import heroBgVideo from "@/assets/hero-bg.mp4";
 
 const features = [
   { icon: Globe, title: "Global Network", desc: "Connect with delegates from institutions across the nation and build lasting relationships." },
@@ -102,11 +103,13 @@ const Index = () => {
       {/* Hero */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <iframe
-            src="https://www.youtube.com/embed/8npvhQPUXSU?autoplay=1&mute=1&loop=1&controls=0&showinfo=0&modestbranding=1&playlist=8npvhQPUXSU&playsinline=1&rel=0"
-            title="Dark Clouds Thunderstorms Sky Background"
-            allow="autoplay; encrypted-media"
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[177.77vh] h-[56.25vw] min-w-full min-h-full"
+          <video
+            src={heroBgVideo}
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-background/50" />
         </div>
