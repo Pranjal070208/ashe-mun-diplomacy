@@ -2,6 +2,7 @@ import { Shield, Star } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageTransition from "@/components/PageTransition";
+import asheMunLogo from "@/assets/ashe-mun-logo.jpg";
 
 const About = () => (
   <PageTransition>
@@ -13,9 +14,9 @@ const About = () => (
         <AnimatedSection>
           <div className="flex flex-col md:flex-row items-center gap-12 max-w-5xl mx-auto">
             <div className="w-full md:w-1/2 aspect-[4/3] bg-card rounded-2xl border border-border relative overflow-hidden flex items-center justify-center flex-shrink-0">
-              <div className="absolute top-0 left-0 w-10 h-10 border-t-2 border-l-2 border-primary/40 rounded-tl-2xl" />
-              <div className="absolute bottom-0 right-0 w-10 h-10 border-b-2 border-r-2 border-secondary/40 rounded-br-2xl" />
-              <span className="font-display text-3xl text-muted-foreground/20 gradient-text">Ashe MUN</span>
+              <div className="absolute top-0 left-0 w-10 h-10 border-t-2 border-l-2 border-primary/40 rounded-tl-2xl z-10" />
+              <div className="absolute bottom-0 right-0 w-10 h-10 border-b-2 border-r-2 border-secondary/40 rounded-br-2xl z-10" />
+              <img src={asheMunLogo} alt="Ashe MUN logo" className="w-full h-full object-contain p-4" />
             </div>
             <div>
               <h2 className="font-display text-3xl md:text-4xl font-bold mb-6 gradient-text">Our Story</h2>
