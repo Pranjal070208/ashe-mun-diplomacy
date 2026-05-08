@@ -128,7 +128,7 @@ const Index = () => {
                 fontFamily="Space Grotesk, sans-serif"
                 fontWeight="700"
                 fill="black"
-                style={{ fontSize: "clamp(96px, 22vw, 360px)", letterSpacing: "-0.02em" }}
+                style={{ fontSize: "clamp(80px, 18vw, 300px)", letterSpacing: "-0.02em" }}
               >
                 ASHE MUN
               </text>
