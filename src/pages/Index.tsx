@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Globe, Mic, Scale, Handshake, Mail, Phone, MapPin, Instagram, Twitter, Linkedin, Youtube, Send } from "lucide-react";
-import ParticleBackground from "@/components/ParticleBackground";
 import AnimatedSection from "@/components/AnimatedSection";
 import Marquee from "@/components/Marquee";
 import PageTransition from "@/components/PageTransition";
@@ -102,7 +101,15 @@ const Index = () => {
     <PageTransition>
       {/* Hero */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <ParticleBackground />
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <iframe
+            src="https://www.youtube.com/embed/8npvhQPUXSU?autoplay=1&mute=1&loop=1&controls=0&showinfo=0&modestbranding=1&playlist=8npvhQPUXSU&playsinline=1&rel=0"
+            title="Dark Clouds Thunderstorms Sky Background"
+            allow="autoplay; encrypted-media"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[177.77vh] h-[56.25vw] min-w-full min-h-full"
+          />
+          <div className="absolute inset-0 bg-background/50" />
+        </div>
         <div className="absolute inset-0 noise-overlay pointer-events-none" />
         {/* Ambient glow orbs */}
         <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
