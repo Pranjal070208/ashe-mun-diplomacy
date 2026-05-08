@@ -145,7 +145,7 @@ const Index = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative z-10 text-center px-6 max-w-4xl mt-[28vh] sm:mt-[32vh]"
+          className="relative z-10 text-center px-6 max-w-4xl mt-[44vh] sm:mt-[48vh]"
         >
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-secondary/30 text-secondary text-sm font-heading mb-8 bg-background/40 backdrop-blur-sm">
             August 15–17, 2026
