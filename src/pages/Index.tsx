@@ -101,33 +101,53 @@ const Index = () => {
   return (
     <PageTransition>
       {/* Hero */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <video
-            src={heroBgVideo}
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-background/50" />
-        </div>
-        <div className="absolute inset-0 noise-overlay pointer-events-none" />
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
+        {/* Video plays behind everything; only visible through the ASHE MUN text cutout */}
+        <video
+          src={heroBgVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {/* Background overlay with text-shaped cutout — video shows through the letters only */}
+        <svg
+          className="absolute inset-0 w-full h-full pointer-events-none z-[1]"
+          preserveAspectRatio="xMidYMid slice"
+          aria-hidden="true"
+        >
+          <defs>
+            <mask id="ashe-mun-cutout">
+              <rect width="100%" height="100%" fill="white" />
+              <text
+                x="50%"
+                y="50%"
+                textAnchor="middle"
+                dominantBaseline="central"
+                fontFamily="Space Grotesk, sans-serif"
+                fontWeight="700"
+                fill="black"
+                style={{ fontSize: "clamp(96px, 22vw, 360px)", letterSpacing: "-0.02em" }}
+              >
+                ASHE MUN
+              </text>
+            </mask>
+          </defs>
+          <rect width="100%" height="100%" fill="hsl(var(--background))" mask="url(#ashe-mun-cutout)" />
+        </svg>
+        <div className="absolute inset-0 noise-overlay pointer-events-none z-[2]" />
         {/* Ambient glow orbs */}
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-secondary/5 blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px] pointer-events-none z-[2]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-secondary/5 blur-[120px] pointer-events-none z-[2]" />
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="relative z-10 text-center px-6 max-w-4xl"
+          className="relative z-10 text-center px-6 max-w-4xl mt-[28vh] sm:mt-[32vh]"
         >
-          <h1 className="font-display text-6xl font-bold tracking-tight leading-none mb-6 gradient-text md:text-9xl">
-            ASHE MUN
-          </h1>
-          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-secondary/30 text-secondary text-sm font-heading mb-10">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-secondary/30 text-secondary text-sm font-heading mb-8 bg-background/40 backdrop-blur-sm">
             August 15–17, 2026
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
