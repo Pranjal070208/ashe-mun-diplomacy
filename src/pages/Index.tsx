@@ -7,7 +7,6 @@ import Marquee from "@/components/Marquee";
 import PageTransition from "@/components/PageTransition";
 import RegistrationModal from "@/components/RegistrationModal";
 import heroBgVideo from "@/assets/hero-bg.mp4";
-import Scene3D from "@/components/Scene3D";
 
 const features = [
   { icon: Globe, title: "Global Network", desc: "Connect with delegates from institutions across the nation and build lasting relationships." },
@@ -211,35 +210,6 @@ const Index = () => {
                 </div>
               </AnimatedSection>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 3D Globe Section */}
-      <section className="relative py-24 overflow-hidden bg-surface">
-        <div className="absolute inset-0 noise-overlay pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-primary/5 blur-[120px] pointer-events-none" />
-        <div className="container mx-auto px-6 relative">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <AnimatedSection>
-              <p className="font-heading text-xs uppercase tracking-[0.3em] text-primary mb-4">Diplomacy in Motion</p>
-              <h2 className="font-display text-3xl md:text-5xl font-bold gradient-text mb-6 leading-tight">
-                A World Beyond Borders
-              </h2>
-              <div className="gradient-divider max-w-[120px] mb-6" />
-              <p className="text-muted-foreground font-body leading-relaxed mb-4">
-                At Ashe MUN, every voice contributes to a larger orbit of ideas. Delegates from across the country converge to debate, negotiate and shape resolutions on issues that ripple far beyond a single committee room.
-              </p>
-              <p className="text-muted-foreground font-body leading-relaxed">
-                Step into a space where rhetoric meets responsibility, and where the next generation of diplomats finds its voice.
-              </p>
-            </AnimatedSection>
-            <AnimatedSection delay={0.2}>
-              <div className="relative w-full aspect-square max-w-[520px] mx-auto">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/10 to-secondary/10 blur-2xl" />
-                <Scene3D />
-              </div>
-            </AnimatedSection>
           </div>
         </div>
       </section>
