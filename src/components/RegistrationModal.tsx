@@ -192,6 +192,9 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
               delegation_type: "individual",
             });
             if (error) throw error;
+            supabase.functions.invoke("send-thank-you-email", {
+              body: { recipients: [{ name: form.name, email: form.email }] },
+            }).catch((e) => console.error("Thank-you email failed:", e));
           } else {
             const groupId = crypto.randomUUID();
             const perDelegate = Math.floor(amount / delegates.length);
@@ -213,6 +216,11 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
             }));
             const { error } = await supabase.from("registrations").insert(rows);
             if (error) throw error;
+            supabase.functions.invoke("send-thank-you-email", {
+              body: {
+                recipients: delegates.map((d) => ({ name: d.name, email: d.email })),
+              },
+            }).catch((e) => console.error("Thank-you email failed:", e));
           }
           toast.success("Payment successful! Registration confirmed.", {
             description: `Payment ID: ${response.razorpay_payment_id}`,
