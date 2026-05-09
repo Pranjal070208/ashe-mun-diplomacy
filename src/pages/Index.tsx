@@ -102,6 +102,7 @@ const Index = () => {
     <PageTransition>
       {/* Hero */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
+        <h1 className="sr-only">Ashe MUN 2026 — Premier Model United Nations Conference (August 15–17, 2026)</h1>
         {/* Video plays behind everything; only visible through the ASHE MUN text cutout */}
         <video
           src={heroBgVideo}
