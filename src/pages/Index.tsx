@@ -237,13 +237,12 @@ const Index = () => {
             <div className="gradient-divider max-w-[120px] mx-auto" />
           </AnimatedSection>
 
-          <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+          <div className="max-w-2xl mx-auto">
             <AnimatedSection delay={0.1}>
               <div className="space-y-4">
                 {[
                   { icon: Mail, label: "Email", value: "contact@ashemun.com" },
                   { icon: Phone, label: "Phone", value: "+91 9874563210" },
-                  { icon: MapPin, label: "Location", value: "ABC XYZ, Kanpur" },
                 ].map((c, i) => (
                   <div key={i} className="glass-card p-5 flex items-center gap-4 hover:border-primary/20 transition-all">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -263,27 +262,6 @@ const Index = () => {
                   ))}
                 </div>
               </div>
-            </AnimatedSection>
-
-            <AnimatedSection delay={0.2}>
-              <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-                {["Name", "Email", "Phone"].map((f) => (
-                  <input
-                    key={f}
-                    type={f === "Email" ? "email" : "text"}
-                    placeholder={f}
-                    className="w-full px-5 py-3.5 rounded-2xl bg-card border border-border text-foreground placeholder:text-muted-foreground text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all"
-                  />
-                ))}
-                <textarea
-                  placeholder="Message"
-                  rows={4}
-                  className="w-full px-5 py-3.5 rounded-2xl bg-card border border-border text-foreground placeholder:text-muted-foreground text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all resize-none"
-                />
-                <button className="w-full font-heading text-sm px-6 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:shadow-[0_0_40px_hsl(190_80%_55%/0.3)] transition-all duration-300 flex items-center justify-center gap-2">
-                  <Send size={16} /> Send Message
-                </button>
-              </form>
             </AnimatedSection>
           </div>
         </div>
