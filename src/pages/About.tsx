@@ -2,7 +2,7 @@ import { Shield, Star } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageTransition from "@/components/PageTransition";
-import asheMunLogo from "@/assets/ashe-mun-logo.jpg";
+import asheMunLogo from "@/assets/logo.svg";
 
 const About = () => (
   <PageTransition>
