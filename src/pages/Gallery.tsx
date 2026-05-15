@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import PageHero from "@/components/PageHero";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageTransition from "@/components/PageTransition";
+import SEO from "@/components/SEO";
 
 const categories = ["All", "Conferences", "Committees", "Social"] as const;
 
@@ -40,6 +41,18 @@ const Gallery = () => {
 
   return (
     <PageTransition>
+      <SEO
+        title="Gallery — Ashe MUN"
+        description="Photos from past Ashe MUN conferences: opening ceremonies, committee sessions, delegate addresses, and social events."
+        path="/gallery"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "Ashe MUN Gallery",
+          description: "Photos from past Ashe MUN conferences.",
+          image: images.map((img) => img.src),
+        }}
+      />
       <PageHero title="Gallery" breadcrumb={[{ label: "Home", to: "/" }, { label: "Gallery" }]} />
 
       <section className="py-24">

@@ -6,6 +6,7 @@ import AnimatedSection from "@/components/AnimatedSection";
 import Marquee from "@/components/Marquee";
 import PageTransition from "@/components/PageTransition";
 import RegistrationModal from "@/components/RegistrationModal";
+import SEO from "@/components/SEO";
 import heroBgVideo from "@/assets/hero-bg.mp4";
 
 const features = [
@@ -100,6 +101,11 @@ const Index = () => {
 
   return (
     <PageTransition>
+      <SEO
+        title="Ashe MUN — Model United Nations Conference (Aug 15–17, 2026)"
+        description="Ashe MUN 2026: a premier Model United Nations conference. Deliberate with Clarity. Debate with Passion. Deliver with Purpose. Register now."
+        path="/"
+      />
       {/* Hero */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
         <h1 className="sr-only">Ashe MUN 2026 — Premier Model United Nations Conference (August 15–17, 2026)</h1>
@@ -161,6 +167,7 @@ const Index = () => {
             <Link
               to="/about"
               className="font-heading text-sm px-8 py-3.5 rounded-full border border-border text-foreground hover:border-primary/50 hover:text-primary transition-all duration-300"
+              aria-label="Learn more about Ashe MUN"
             >
               Learn More
             </Link>
@@ -206,7 +213,7 @@ const Index = () => {
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
                     <f.icon className="text-primary" size={22} />
                   </div>
-                  <h4 className="font-heading text-base font-semibold mb-2">{f.title}</h4>
+                  <h3 className="font-heading text-base font-semibold mb-2">{f.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed font-body">{f.desc}</p>
                 </div>
               </AnimatedSection>

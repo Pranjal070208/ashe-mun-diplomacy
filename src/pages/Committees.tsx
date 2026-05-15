@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import PageHero from "@/components/PageHero";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageTransition from "@/components/PageTransition";
+import SEO from "@/components/SEO";
 
 const committees = [
   { acronym: "UNSC", name: "United Nations Security Council", agenda: "Addressing the proliferation of autonomous weapons systems", difficulty: "Advanced", desc: "The premier crisis-response body of the United Nations, tasked with maintaining international peace and security. Delegates will navigate complex geopolitical dynamics while addressing the emergence of AI-driven warfare.", chair: "Victoria Ashworth" },
@@ -27,6 +28,22 @@ const Committees = () => {
 
   return (
     <PageTransition>
+      <SEO
+        title="Committees — Ashe MUN 2026"
+        description="Explore the eight Ashe MUN 2026 committees: UNSC, UNGA, WHO, DISEC, ICJ, UNHRC, AIPPM, and Crisis Committee — with agendas and difficulty levels."
+        path="/committees"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "Ashe MUN 2026 Committees",
+          itemListElement: committees.map((c, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            name: `${c.acronym} — ${c.name}`,
+            description: c.agenda,
+          })),
+        }}
+      />
       <PageHero title="Our Committees" breadcrumb={[{ label: "Home", to: "/" }, { label: "Committees" }]} />
 
       <section className="py-24">
