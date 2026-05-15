@@ -2,10 +2,16 @@ import { Shield, Star } from "lucide-react";
 import PageHero from "@/components/PageHero";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageTransition from "@/components/PageTransition";
+import SEO from "@/components/SEO";
 import asheMunLogo from "@/assets/ashe-mun-logo.jpg";
 
 const About = () => (
   <PageTransition>
+    <SEO
+      title="About — Ashe MUN"
+      description="Learn about Ashe MUN: our story, mission, and vision. Named after Arthur Ashe, we bring delegates together to debate the issues shaping our future."
+      path="/about"
+    />
     <PageHero title="About Ashe MUN" breadcrumb={[{ label: "Home", to: "/" }, { label: "About" }]} />
 
     {/* Our Story */}
