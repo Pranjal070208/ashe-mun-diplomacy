@@ -116,6 +116,9 @@ const Index = () => {
           muted
           loop
           playsInline
+          preload="auto"
+          // @ts-expect-error fetchpriority is valid HTML
+          fetchpriority="high"
           className="absolute inset-0 w-full h-full object-cover"
         />
         {/* Background overlay with text-shaped cutout — video shows through the letters only */}
