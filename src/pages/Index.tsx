@@ -116,6 +116,8 @@ const Index = () => {
           muted
           loop
           playsInline
+          preload="auto"
+          {...({ fetchpriority: "high" } as Record<string, string>)}
           className="absolute inset-0 w-full h-full object-cover"
         />
         {/* Background overlay with text-shaped cutout — video shows through the letters only */}
