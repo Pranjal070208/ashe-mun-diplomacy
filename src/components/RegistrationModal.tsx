@@ -307,19 +307,33 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
 
   // ─── Upgrade flow ───
   const handleUpgradeLookup = async () => {
-    if (!upgradePaymentIdInput.trim()) {
-      toast.error("Enter your Payment ID");
+  const handleUpgradeLookup = async () => {
+    const normalized = normalizePaymentId(upgradePaymentIdInput);
+    const parsed = paymentIdSchema.safeParse(normalized);
+    if (!parsed.success) {
+      const msg = parsed.error.issues[0]?.message ?? "Invalid Payment ID";
+      setUpgradeIdError(msg);
+      toast.error("Check your Payment ID", { description: msg });
       return;
     }
+    setUpgradeIdError(null);
+    setUpgradePaymentIdInput(parsed.data);
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("lookup-registration", {
-        body: { paymentId: upgradePaymentIdInput.trim() },
+        body: { paymentId: parsed.data },
       });
-      if (error) throw error;
+      if (error) {
+        console.error(error);
+        toast.error("Couldn't reach the server", {
+          description: "Please check your connection and try again.",
+        });
+        return;
+      }
       if (!data?.found) {
-        toast.error("No registration found with that Payment ID.");
-        setLoading(false);
+        const msg = "We couldn't find a registration with that Payment ID. Double-check the ID from your confirmation email.";
+        setUpgradeIdError("No registration found for this Payment ID");
+        toast.error("Registration not found", { description: msg });
         return;
       }
       setUpgradeDelegates(data.delegates);
@@ -328,7 +342,9 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
       setUpgradeStep("confirm");
     } catch (err) {
       console.error(err);
-      toast.error("Lookup failed. Please try again.");
+      toast.error("Lookup failed", {
+        description: "Something went wrong while looking up your Payment ID. Please try again or contact support.",
+      });
     } finally {
       setLoading(false);
     }
