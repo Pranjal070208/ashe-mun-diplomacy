@@ -124,6 +124,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
   // Upgrade flow state
   const [upgradeStep, setUpgradeStep] = useState<"lookup" | "confirm" | "choose" | "done">("lookup");
   const [upgradePaymentIdInput, setUpgradePaymentIdInput] = useState("");
+  const [upgradeIdError, setUpgradeIdError] = useState<string | null>(null);
   const [upgradeDelegates, setUpgradeDelegates] = useState<any[]>([]);
   const [upgradeCurrentCategory, setUpgradeCurrentCategory] = useState<Category>("mun");
   const [upgradeChoice, setUpgradeChoice] = useState<Category | null>(null);
