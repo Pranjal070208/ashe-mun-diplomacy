@@ -17,6 +17,7 @@ export type Database = {
       registrations: {
         Row: {
           amount_paid: number
+          category: string
           class: string
           created_at: string
           delegation_group_id: string | null
@@ -32,9 +33,14 @@ export type Database = {
           preference_3: string
           razorpay_payment_id: string | null
           school: string
+          upgrade_amount: number | null
+          upgrade_category: string | null
+          upgrade_payment_id: string | null
+          upgraded_at: string | null
         }
         Insert: {
           amount_paid: number
+          category?: string
           class: string
           created_at?: string
           delegation_group_id?: string | null
@@ -50,9 +56,14 @@ export type Database = {
           preference_3: string
           razorpay_payment_id?: string | null
           school: string
+          upgrade_amount?: number | null
+          upgrade_category?: string | null
+          upgrade_payment_id?: string | null
+          upgraded_at?: string | null
         }
         Update: {
           amount_paid?: number
+          category?: string
           class?: string
           created_at?: string
           delegation_group_id?: string | null
@@ -68,6 +79,10 @@ export type Database = {
           preference_3?: string
           razorpay_payment_id?: string | null
           school?: string
+          upgrade_amount?: number | null
+          upgrade_category?: string | null
+          upgrade_payment_id?: string | null
+          upgraded_at?: string | null
         }
         Relationships: []
       }
