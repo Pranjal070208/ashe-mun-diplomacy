@@ -698,13 +698,37 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
                       type="text"
                       placeholder="pay_XXXXXXXXXXXXXX"
                       value={upgradePaymentIdInput}
-                      onChange={(e) => setUpgradePaymentIdInput(e.target.value)}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setUpgradePaymentIdInput(v);
+                        if (upgradeIdError && PAYMENT_ID_REGEX.test(normalizePaymentId(v))) {
+                          setUpgradeIdError(null);
+                        }
+                      }}
+                      onBlur={() => {
+                        const v = normalizePaymentId(upgradePaymentIdInput);
+                        if (!v) {
+                          setUpgradeIdError(null);
+                          return;
+                        }
+                        const parsed = paymentIdSchema.safeParse(v);
+                        setUpgradeIdError(parsed.success ? null : (parsed.error.issues[0]?.message ?? "Invalid Payment ID"));
+                      }}
+                      aria-invalid={!!upgradeIdError}
+                      aria-describedby="upgrade-payment-id-hint"
                       className={inputClass}
                     />
+                    {upgradeIdError ? (
+                      <p id="upgrade-payment-id-hint" className="text-xs text-destructive">{upgradeIdError}</p>
+                    ) : (
+                      <p id="upgrade-payment-id-hint" className="text-xs text-muted-foreground">
+                        Format: <code>pay_</code> followed by 14 letters or numbers.
+                      </p>
+                    )}
                     <button
                       type="button"
                       onClick={handleUpgradeLookup}
-                      disabled={loading || !upgradePaymentIdInput.trim()}
+                      disabled={loading || !PAYMENT_ID_REGEX.test(normalizePaymentId(upgradePaymentIdInput))}
                       className="w-full font-heading text-sm px-6 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold flex items-center justify-center gap-2 disabled:opacity-60"
                     >
                       <Search size={16} /> {loading ? "Looking up..." : "Find My Registration"}
