@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Send, Plus, Trash2, ChevronDown, ChevronUp, Users, User } from "lucide-react";
+import { X, Send, Plus, Trash2, ChevronDown, ChevronUp, Users, User, ArrowUpCircle, Search, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,6 +27,30 @@ declare global {
 }
 
 const RAZORPAY_KEY = "rzp_live_Sdjq0W15ZVeiHg";
+
+type Category = "mun" | "mun_comedy_general" | "mun_comedy_fanpit";
+
+const CATEGORY_PRICE: Record<Category, number> = {
+  mun: 400,
+  mun_comedy_general: 500,
+  mun_comedy_fanpit: 600,
+};
+const CATEGORY_TIER: Record<Category, number> = {
+  mun: 1,
+  mun_comedy_general: 2,
+  mun_comedy_fanpit: 3,
+};
+const CATEGORY_LABEL: Record<Category, string> = {
+  mun: "MUN",
+  mun_comedy_general: "MUN + Comedy Night (General)",
+  mun_comedy_fanpit: "MUN + Comedy Night (Fanpit)",
+};
+const CATEGORY_SHORT: Record<Category, string> = {
+  mun: "MUN only",
+  mun_comedy_general: "MUN + Comedy (General)",
+  mun_comedy_fanpit: "MUN + Comedy (Fanpit)",
+};
+const CATEGORIES: Category[] = ["mun", "mun_comedy_general", "mun_comedy_fanpit"];
 
 interface DelegateForm {
   name: string;
@@ -59,7 +83,8 @@ const getAvailableCommittees = (exclude: string[]) =>
   committees.filter((c) => !exclude.includes(c));
 
 const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
-  const [mode, setMode] = useState<"individual" | "school">("individual");
+  const [mode, setMode] = useState<"individual" | "school" | "upgrade">("individual");
+  const [category, setCategory] = useState<Category>("mun");
 
   // Individual form state
   const [form, setForm] = useState({
@@ -82,6 +107,13 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
   const [expandedDelegate, setExpandedDelegate] = useState<number>(0);
 
   const [loading, setLoading] = useState(false);
+
+  // Upgrade flow state
+  const [upgradeStep, setUpgradeStep] = useState<"lookup" | "confirm" | "choose" | "done">("lookup");
+  const [upgradePaymentIdInput, setUpgradePaymentIdInput] = useState("");
+  const [upgradeDelegates, setUpgradeDelegates] = useState<any[]>([]);
+  const [upgradeCurrentCategory, setUpgradeCurrentCategory] = useState<Category>("mun");
+  const [upgradeChoice, setUpgradeChoice] = useState<Category | null>(null);
 
   const update = (field: string, value: string) =>
     setForm((prev) => ({
@@ -126,6 +158,10 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
   const completedDelegates = delegates.filter(isDelegateValid).length;
   const isSchoolValid = schoolName.trim() && completedDelegates === delegates.length;
 
+  const perDelegatePrice = CATEGORY_PRICE[category];
+  const individualAmount = perDelegatePrice;
+  const schoolAmount = perDelegatePrice * delegates.length;
+
   const handlePayNow = async () => {
     if (mode === "individual" && !isIndividualValid) {
       toast.error("Please fill all fields before proceeding.");
@@ -137,7 +173,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
     }
 
     setLoading(true);
-    const amount = mode === "individual" ? 400 : delegates.length * 400;
+    const amount = mode === "individual" ? individualAmount : schoolAmount;
 
     // Create a Razorpay order on the server (auto-capture enabled).
     let orderId: string;
@@ -148,7 +184,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
           amount,
           currency: "INR",
           receipt: `mun_${Date.now()}`,
-          notes: { mode, delegates: String(mode === "school" ? delegates.length : 1) },
+        notes: { mode, category, delegates: String(mode === "school" ? delegates.length : 1) },
         },
       });
       if (error) throw error;
@@ -190,10 +226,15 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
               amount_paid: amount,
               paid_at: new Date().toISOString(),
               delegation_type: "individual",
+              category,
             });
             if (error) throw error;
             supabase.functions.invoke("send-thank-you-email", {
-              body: { recipients: [{ name: form.name, email: form.email }] },
+              body: {
+                recipients: [{ name: form.name, email: form.email }],
+                paymentId: response.razorpay_payment_id,
+                category,
+              },
             }).catch((e) => console.error("Thank-you email failed:", e));
           } else {
             const groupId = crypto.randomUUID();
@@ -213,12 +254,15 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
               paid_at: new Date().toISOString(),
               delegation_type: "school",
               delegation_group_id: groupId,
+              category,
             }));
             const { error } = await supabase.from("registrations").insert(rows);
             if (error) throw error;
             supabase.functions.invoke("send-thank-you-email", {
               body: {
                 recipients: delegates.map((d) => ({ name: d.name, email: d.email })),
+                paymentId: response.razorpay_payment_id,
+                category,
               },
             }).catch((e) => console.error("Thank-you email failed:", e));
           }
