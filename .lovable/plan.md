@@ -1,46 +1,80 @@
 
+## Plan: Categories + Upgrade Flow
 
-## Plan: Two Registration Categories — Individual & School Delegation
+### 1. Email changes (`send-thank-you-email`)
+- Remove "(if applicable)" from the bullet list.
+- Accept `paymentId` (and `category`) in the request body.
+- Add a paragraph: "Your Payment ID: **{paymentId}** — please save this. You can use it later to upgrade your registration to a higher category."
+- Update both HTML and plain-text builders.
+- New edge function `send-upgrade-email` with similar template confirming the upgrade (old → new category, new payment ID, new amount).
 
-### Overview
-Add a category selector at the top of the registration modal. **Individual Delegation** keeps the current single-delegate form. **School Delegation** collects a shared school name + details for 10–20 delegates, each with their own name, mobile, email, class, 3 committee preferences, and experience. Fee = ₹10 per delegate.
+### 2. Database migration
+Add to `registrations`:
+- `category TEXT NOT NULL DEFAULT 'mun'` — values: `'mun'` | `'mun_comedy_general'` | `'mun_comedy_fanpit'`
+- `upgrade_category TEXT` (nullable)
+- `upgrade_payment_id TEXT` (nullable)
+- `upgrade_amount INTEGER` (nullable)
+- `upgraded_at TIMESTAMPTZ` (nullable)
 
-### Database Change
-Add a new column to the `registrations` table:
-- `delegation_type TEXT NOT NULL DEFAULT 'individual'` — values: `'individual'` or `'school'`
-- `delegation_group_id UUID` — nullable; for school delegations, all delegates in the same submission share the same group UUID so they can be linked together in the admin view.
+Add a SELECT RLS policy scoped for the upgrade lookup edge function (which will use service role, so no public SELECT needed).
 
-No new table needed — each delegate is still one row, tagged with type and group.
+### 3. Pricing constants (shared in frontend + edge functions)
+```
+mun                  → ₹4   (400 paise)
+mun_comedy_general   → ₹5   (500 paise)
+mun_comedy_fanpit    → ₹6   (600 paise)
+```
+**Confirm:** are these really ₹4/5/6, or should they be ₹400/500/600 / ₹4000/5000/6000? Current registration fee is ₹10. I'll proceed assuming ₹4/5/6 unless you say otherwise.
 
-### Frontend Changes
+### 4. Registration flow updates (`RegistrationModal.tsx`)
+- Add a **category selector** (3 cards) inside the Individual + School flows — shown after the existing Individual/School tabs. For School, the same category applies to all delegates in the group.
+- Compute total = `delegates × categoryPrice`.
+- Save `category` on every inserted row.
+- On Razorpay success, call `send-thank-you-email` with `paymentId` and `category` (one email per delegate, each receiving their own payment ID — which is the same Razorpay payment ID for the group).
 
-**1. `src/components/RegistrationModal.tsx` — Major rewrite**
+### 5. New "Upgrade" tab in RegistrationModal
+Add a 3rd tab next to **Individual / School**: **Upgrade**.
 
-- Add a **category toggle** (two styled tabs/buttons) at the top: "Individual Delegation" / "School Delegation". Default: Individual.
-- **Individual mode**: identical to current form (no changes).
-- **School Delegation mode**:
-  - Top section: School Name (shared across all delegates).
-  - Delegate list: start with 10 empty delegate cards. Each card has: Name, Mobile, Email, Class, Pref 1/2/3, Experience.
-  - "Add Delegate" button (up to 20). "Remove" button on cards beyond the 10th.
-  - Each delegate card is a compact, collapsible accordion-style row showing delegate number + name (once filled). Expand to edit fields. This keeps the form navigable.
-  - **Running total** displayed at the bottom: `{count} delegates × ₹10 = ₹{count * 10}`.
-  - On submit: validate all delegates have required fields filled. Open Razorpay with `amount = count * 1000` (paise). On success, insert all delegates as separate rows sharing the same `delegation_group_id` UUID and `delegation_type = 'school'`.
+Flow:
+1. **Step 1 — Payment ID input:** "Enter the Payment ID we sent you in your confirmation email."
+2. **Step 2 — Lookup + confirm:** Call new edge function `lookup-registration` (service role) that returns matching rows by `razorpay_payment_id`. Show the delegate(s) name/email/school/current category. "Is this you? Confirm to continue."
+3. **Step 3 — Upgrade options:**
+   - Current `mun` → choose `mun_comedy_general` (pay ₹1) or `mun_comedy_fanpit` (pay ₹2)
+   - Current `mun_comedy_general` → choose `mun_comedy_fanpit` (pay ₹1)
+   - Current `mun_comedy_fanpit` → "You are already on the highest tier. No upgrade available."
+   - Already upgraded → show current `upgrade_category`, no further upgrade unless eligible.
+   - **Amount charged = difference between new and current category price × number of delegates in the group.**
+4. **Step 4 — Razorpay payment** for the diff.
+5. **Step 5 — On success:** call new edge function `apply-upgrade` (service role) that:
+   - Updates all matching rows (by original `razorpay_payment_id` or `delegation_group_id`) setting `upgrade_category`, `upgrade_payment_id`, `upgrade_amount`, `upgraded_at`.
+   - Triggers `send-upgrade-email` to each delegate.
 
-**2. `src/pages/Admin.tsx` — Minor updates**
-- Add "Type" column to the table showing Individual/School.
-- Add "Group" column (short UUID or dash for individuals).
-- Update XLSX export to include these columns.
+### 6. New edge functions
+- **`lookup-registration`** (service role, verify_jwt=false): `{ paymentId }` → returns delegate rows (name, email, school, category, upgrade_category, delegation_type, group size). No sensitive data beyond what the user already submitted.
+- **`apply-upgrade`** (service role, verify_jwt=false): `{ originalPaymentId, newCategory, newPaymentId, newAmount }` → validates eligibility server-side (re-checks current category < new category), updates rows, calls `send-upgrade-email`.
+- **`send-upgrade-email`**: similar shape to thank-you, mentions old category, new category, new payment ID, new amount.
 
-**3. Edge function `get-registrations/index.ts`** — no changes needed (it returns all rows).
+Server-side eligibility re-check in `apply-upgrade` prevents tampering (client can't downgrade-then-upgrade or skip the price diff).
 
-### UX Design for School Delegation Form
-- Accordion pattern: delegates are numbered cards (Delegate 1, Delegate 2, …). Only one expanded at a time.
-- Progress indicator: "8/10 delegates completed" with a progress bar.
-- The school name field is pinned at the top outside the accordion.
-- Submit button shows the total amount and is disabled until all delegates (min 10) have required fields filled.
+### 7. Admin panel (`Admin.tsx`)
+Add columns:
+- **Category** (badge: MUN / MUN+Comedy G / MUN+Comedy F)
+- **Upgraded To** (— or new category badge)
+- **Upgrade Payment ID**
+- **Upgrade Amount**
+- **Upgraded At**
 
-### Technical Details
-- Generate `delegation_group_id` client-side with `crypto.randomUUID()`.
-- Insert all delegates in a single `.insert([...rows])` call after payment.
-- Amount in paise: `delegates.length * 1000`.
+Include all in XLSX export.
 
+### 8. `get-registrations` edge function
+No code change needed if it returns `*` — the new columns flow through automatically. Verify it uses `select('*')`.
+
+---
+
+### Files touched
+- **Migration:** new SQL file adding 5 columns.
+- **Edit:** `supabase/functions/send-thank-you-email/index.ts`, `src/components/RegistrationModal.tsx`, `src/pages/Admin.tsx`, `supabase/config.toml` (register new functions with `verify_jwt = false`).
+- **Create:** `supabase/functions/send-upgrade-email/index.ts`, `supabase/functions/lookup-registration/index.ts`, `supabase/functions/apply-upgrade/index.ts`.
+
+### Open question
+Are the prices really **₹4 / ₹5 / ₹6**, or did you mean ₹400/500/600 (or ₹4000/5000/6000)? I'll use ₹4/5/6 unless you correct me before approving.
