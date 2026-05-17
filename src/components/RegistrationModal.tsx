@@ -307,7 +307,6 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
 
   // ─── Upgrade flow ───
   const handleUpgradeLookup = async () => {
-  const handleUpgradeLookup = async () => {
     const normalized = normalizePaymentId(upgradePaymentIdInput);
     const parsed = paymentIdSchema.safeParse(normalized);
     if (!parsed.success) {
