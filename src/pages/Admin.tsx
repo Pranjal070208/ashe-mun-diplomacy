@@ -19,7 +19,18 @@ interface Registration {
   created_at: string;
   delegation_type: string;
   delegation_group_id: string | null;
+  category: string;
+  upgrade_category: string | null;
+  upgrade_payment_id: string | null;
+  upgrade_amount: number | null;
+  upgraded_at: string | null;
 }
+
+const CATEGORY_LABEL: Record<string, string> = {
+  mun: "MUN",
+  mun_comedy_general: "MUN + Comedy (Gen)",
+  mun_comedy_fanpit: "MUN + Comedy (Fanpit)",
+};
 
 const Admin = () => {
   const [authenticated, setAuthenticated] = useState(false);
@@ -95,6 +106,7 @@ const Admin = () => {
       "#": i + 1,
       Type: r.delegation_type === "school" ? "School" : "Individual",
       Group: r.delegation_group_id ? r.delegation_group_id.slice(0, 8) : "—",
+      Category: CATEGORY_LABEL[r.category] || r.category,
       Name: r.name,
       Mobile: r.mobile,
       Email: r.email,
@@ -106,6 +118,10 @@ const Admin = () => {
       Experience: r.experience || "",
       "Payment ID": r.razorpay_payment_id || "",
       "Paid At": new Date(r.paid_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "medium" }),
+      "Upgraded To": r.upgrade_category ? (CATEGORY_LABEL[r.upgrade_category] || r.upgrade_category) : "",
+      "Upgrade Payment ID": r.upgrade_payment_id || "",
+      "Upgrade Amount": r.upgrade_amount != null ? r.upgrade_amount / 100 : "",
+      "Upgraded At": r.upgraded_at ? new Date(r.upgraded_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "medium" }) : "",
     }));
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
@@ -185,7 +201,7 @@ const Admin = () => {
         <table className="w-full text-sm text-foreground">
           <thead className="bg-card border-b border-border">
             <tr>
-              {["#", "Type", "Group", "Name", "Mobile", "Email", "School", "Class", "Pref 1", "Pref 2", "Pref 3", "Experience", "Payment ID", "Paid At"].map((h) => (
+              {["#", "Type", "Group", "Category", "Name", "Mobile", "Email", "School", "Class", "Pref 1", "Pref 2", "Pref 3", "Experience", "Payment ID", "Paid At", "Upgraded To", "Upgrade Pay ID", "Upgrade ₹", "Upgraded At"].map((h) => (
                 <th key={h} className="px-4 py-3 text-left text-xs font-heading uppercase tracking-wider text-muted-foreground whitespace-nowrap">
                   {h}
                 </th>
@@ -202,6 +218,11 @@ const Admin = () => {
                   </span>
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap font-mono text-xs text-muted-foreground">{r.delegation_group_id ? r.delegation_group_id.slice(0, 8) : "—"}</td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-muted text-foreground">
+                    {CATEGORY_LABEL[r.category] || r.category || "—"}
+                  </span>
+                </td>
                 <td className="px-4 py-3 whitespace-nowrap">{r.name}</td>
                 <td className="px-4 py-3 whitespace-nowrap">{r.mobile}</td>
                 <td className="px-4 py-3 whitespace-nowrap">{r.email}</td>
@@ -215,11 +236,21 @@ const Admin = () => {
                 <td className="px-4 py-3 whitespace-nowrap text-xs">
                   {new Date(r.paid_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "medium" })}
                 </td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                  {r.upgrade_category ? (
+                    <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-primary/20 text-primary">
+                      {CATEGORY_LABEL[r.upgrade_category] || r.upgrade_category}
+                    </span>
+                  ) : <span className="text-muted-foreground">—</span>}
+                </td>
+                <td className="px-4 py-3 whitespace-nowrap font-mono text-xs">{r.upgrade_payment_id || "—"}</td>
+                <td className="px-4 py-3 whitespace-nowrap">{r.upgrade_amount != null ? `₹${(r.upgrade_amount / 100).toFixed(2)}` : "—"}</td>
+                <td className="px-4 py-3 whitespace-nowrap text-xs">{r.upgraded_at ? new Date(r.upgraded_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "medium" }) : "—"}</td>
               </tr>
             ))}
             {registrations.length === 0 && (
               <tr>
-                <td colSpan={14} className="px-4 py-8 text-center text-muted-foreground">
+                <td colSpan={19} className="px-4 py-8 text-center text-muted-foreground">
                   No registrations yet.
                 </td>
               </tr>

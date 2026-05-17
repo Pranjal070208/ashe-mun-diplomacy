@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Send, Plus, Trash2, ChevronDown, ChevronUp, Users, User } from "lucide-react";
+import { X, Send, Plus, Trash2, ChevronDown, ChevronUp, Users, User, ArrowUpCircle, Search, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,6 +27,30 @@ declare global {
 }
 
 const RAZORPAY_KEY = "rzp_live_Sdjq0W15ZVeiHg";
+
+type Category = "mun" | "mun_comedy_general" | "mun_comedy_fanpit";
+
+const CATEGORY_PRICE: Record<Category, number> = {
+  mun: 400,
+  mun_comedy_general: 500,
+  mun_comedy_fanpit: 600,
+};
+const CATEGORY_TIER: Record<Category, number> = {
+  mun: 1,
+  mun_comedy_general: 2,
+  mun_comedy_fanpit: 3,
+};
+const CATEGORY_LABEL: Record<Category, string> = {
+  mun: "MUN",
+  mun_comedy_general: "MUN + Comedy Night (General)",
+  mun_comedy_fanpit: "MUN + Comedy Night (Fanpit)",
+};
+const CATEGORY_SHORT: Record<Category, string> = {
+  mun: "MUN only",
+  mun_comedy_general: "MUN + Comedy (General)",
+  mun_comedy_fanpit: "MUN + Comedy (Fanpit)",
+};
+const CATEGORIES: Category[] = ["mun", "mun_comedy_general", "mun_comedy_fanpit"];
 
 interface DelegateForm {
   name: string;
@@ -59,7 +83,8 @@ const getAvailableCommittees = (exclude: string[]) =>
   committees.filter((c) => !exclude.includes(c));
 
 const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
-  const [mode, setMode] = useState<"individual" | "school">("individual");
+  const [mode, setMode] = useState<"individual" | "school" | "upgrade">("individual");
+  const [category, setCategory] = useState<Category>("mun");
 
   // Individual form state
   const [form, setForm] = useState({
@@ -82,6 +107,13 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
   const [expandedDelegate, setExpandedDelegate] = useState<number>(0);
 
   const [loading, setLoading] = useState(false);
+
+  // Upgrade flow state
+  const [upgradeStep, setUpgradeStep] = useState<"lookup" | "confirm" | "choose" | "done">("lookup");
+  const [upgradePaymentIdInput, setUpgradePaymentIdInput] = useState("");
+  const [upgradeDelegates, setUpgradeDelegates] = useState<any[]>([]);
+  const [upgradeCurrentCategory, setUpgradeCurrentCategory] = useState<Category>("mun");
+  const [upgradeChoice, setUpgradeChoice] = useState<Category | null>(null);
 
   const update = (field: string, value: string) =>
     setForm((prev) => ({
@@ -126,6 +158,10 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
   const completedDelegates = delegates.filter(isDelegateValid).length;
   const isSchoolValid = schoolName.trim() && completedDelegates === delegates.length;
 
+  const perDelegatePrice = CATEGORY_PRICE[category];
+  const individualAmount = perDelegatePrice;
+  const schoolAmount = perDelegatePrice * delegates.length;
+
   const handlePayNow = async () => {
     if (mode === "individual" && !isIndividualValid) {
       toast.error("Please fill all fields before proceeding.");
@@ -137,7 +173,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
     }
 
     setLoading(true);
-    const amount = mode === "individual" ? 400 : delegates.length * 400;
+    const amount = mode === "individual" ? individualAmount : schoolAmount;
 
     // Create a Razorpay order on the server (auto-capture enabled).
     let orderId: string;
@@ -148,7 +184,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
           amount,
           currency: "INR",
           receipt: `mun_${Date.now()}`,
-          notes: { mode, delegates: String(mode === "school" ? delegates.length : 1) },
+        notes: { mode, category, delegates: String(mode === "school" ? delegates.length : 1) },
         },
       });
       if (error) throw error;
@@ -190,10 +226,15 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
               amount_paid: amount,
               paid_at: new Date().toISOString(),
               delegation_type: "individual",
+              category,
             });
             if (error) throw error;
             supabase.functions.invoke("send-thank-you-email", {
-              body: { recipients: [{ name: form.name, email: form.email }] },
+              body: {
+                recipients: [{ name: form.name, email: form.email }],
+                paymentId: response.razorpay_payment_id,
+                category,
+              },
             }).catch((e) => console.error("Thank-you email failed:", e));
           } else {
             const groupId = crypto.randomUUID();
@@ -213,12 +254,15 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
               paid_at: new Date().toISOString(),
               delegation_type: "school",
               delegation_group_id: groupId,
+              category,
             }));
             const { error } = await supabase.from("registrations").insert(rows);
             if (error) throw error;
             supabase.functions.invoke("send-thank-you-email", {
               body: {
                 recipients: delegates.map((d) => ({ name: d.name, email: d.email })),
+                paymentId: response.razorpay_payment_id,
+                category,
               },
             }).catch((e) => console.error("Thank-you email failed:", e));
           }
@@ -245,6 +289,121 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
       setLoading(false);
     });
     rzp.open();
+  };
+
+  // ─── Upgrade flow ───
+  const handleUpgradeLookup = async () => {
+    if (!upgradePaymentIdInput.trim()) {
+      toast.error("Enter your Payment ID");
+      return;
+    }
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("lookup-registration", {
+        body: { paymentId: upgradePaymentIdInput.trim() },
+      });
+      if (error) throw error;
+      if (!data?.found) {
+        toast.error("No registration found with that Payment ID.");
+        setLoading(false);
+        return;
+      }
+      setUpgradeDelegates(data.delegates);
+      const cur = (data.delegates[0]?.upgrade_category || data.delegates[0]?.category || "mun") as Category;
+      setUpgradeCurrentCategory(cur);
+      setUpgradeStep("confirm");
+    } catch (err) {
+      console.error(err);
+      toast.error("Lookup failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const upgradeOptions: Category[] = CATEGORIES.filter(
+    (c) => CATEGORY_TIER[c] > CATEGORY_TIER[upgradeCurrentCategory],
+  );
+
+  const handleUpgradePay = async () => {
+    if (!upgradeChoice) {
+      toast.error("Choose an upgrade option");
+      return;
+    }
+    const diff = CATEGORY_PRICE[upgradeChoice] - CATEGORY_PRICE[upgradeCurrentCategory];
+    const totalDiff = diff * upgradeDelegates.length;
+    setLoading(true);
+
+    let orderId: string;
+    let orderKey: string;
+    try {
+      const { data, error } = await supabase.functions.invoke("create-razorpay-order", {
+        body: {
+          amount: totalDiff,
+          currency: "INR",
+          receipt: `upg_${Date.now()}`,
+          notes: { type: "upgrade", originalPaymentId: upgradePaymentIdInput.trim(), newCategory: upgradeChoice },
+        },
+      });
+      if (error) throw error;
+      orderId = data.order_id;
+      orderKey = data.key_id || RAZORPAY_KEY;
+    } catch (err) {
+      console.error(err);
+      toast.error("Could not initiate payment. Please try again.");
+      setLoading(false);
+      return;
+    }
+
+    const firstDelegate = upgradeDelegates[0];
+    const options = {
+      key: orderKey,
+      order_id: orderId,
+      amount: totalDiff,
+      currency: "INR",
+      name: "Ashe MUN 2026",
+      description: `Upgrade to ${CATEGORY_LABEL[upgradeChoice]} (${upgradeDelegates.length} delegate${upgradeDelegates.length > 1 ? "s" : ""})`,
+      prefill: { name: firstDelegate?.name, email: firstDelegate?.email, contact: firstDelegate?.mobile },
+      theme: { color: "#0ea5e9" },
+      handler: async function (response: any) {
+        try {
+          const { error } = await supabase.functions.invoke("apply-upgrade", {
+            body: {
+              originalPaymentId: upgradePaymentIdInput.trim(),
+              newCategory: upgradeChoice,
+              newPaymentId: response.razorpay_payment_id,
+              expectedAmount: totalDiff,
+            },
+          });
+          if (error) throw error;
+          toast.success("Upgrade successful! A confirmation email has been sent.", {
+            description: `Payment ID: ${response.razorpay_payment_id}`,
+          });
+          setUpgradeStep("done");
+        } catch (err) {
+          console.error(err);
+          toast.error("Payment captured, but upgrade could not be applied. Contact support with your Payment ID.", {
+            description: `Payment ID: ${response.razorpay_payment_id}`,
+          });
+        } finally {
+          setLoading(false);
+        }
+      },
+      modal: { ondismiss: () => setLoading(false) },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.on("payment.failed", (response: any) => {
+      toast.error("Payment failed. Please try again.", { description: response.error.description });
+      setLoading(false);
+    });
+    rzp.open();
+  };
+
+  const resetUpgrade = () => {
+    setUpgradeStep("lookup");
+    setUpgradePaymentIdInput("");
+    setUpgradeDelegates([]);
+    setUpgradeChoice(null);
   };
 
   const inputClass =
@@ -312,30 +471,70 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
             <p className="text-sm text-muted-foreground font-body mb-4">Choose your delegation type to get started.</p>
 
             {/* Category Toggle */}
-            <div className="flex gap-2 mb-6">
+            <div className="flex gap-2 mb-5">
               <button
                 type="button"
                 onClick={() => setMode("individual")}
-                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all border ${
+                className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all border ${
                   mode === "individual"
                     ? "bg-primary text-primary-foreground border-primary shadow-lg"
                     : "bg-card border-border text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <User size={16} /> Individual
+                <User size={14} /> Individual
               </button>
               <button
                 type="button"
                 onClick={() => setMode("school")}
-                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all border ${
+                className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all border ${
                   mode === "school"
                     ? "bg-primary text-primary-foreground border-primary shadow-lg"
                     : "bg-card border-border text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <Users size={16} /> School Delegation
+                <Users size={14} /> School
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode("upgrade")}
+                className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all border ${
+                  mode === "upgrade"
+                    ? "bg-primary text-primary-foreground border-primary shadow-lg"
+                    : "bg-card border-border text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <ArrowUpCircle size={14} /> Upgrade
               </button>
             </div>
+
+            {/* Category picker (only for register flows) */}
+            {mode !== "upgrade" && (
+              <div className="mb-5">
+                <label className="text-xs text-muted-foreground font-heading uppercase tracking-wider mb-2 block">
+                  Choose Package
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {CATEGORIES.map((c) => {
+                    const active = category === c;
+                    return (
+                      <button
+                        type="button"
+                        key={c}
+                        onClick={() => setCategory(c)}
+                        className={`text-left px-3 py-2.5 rounded-xl border transition-all ${
+                          active
+                            ? "border-primary bg-primary/10 ring-2 ring-primary/30"
+                            : "border-border bg-card hover:border-primary/40"
+                        }`}
+                      >
+                        <div className="text-xs font-semibold text-foreground">{CATEGORY_SHORT[c]}</div>
+                        <div className="text-[11px] text-muted-foreground">₹{CATEGORY_PRICE[c] / 100} / delegate</div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* ─── INDIVIDUAL FORM ─── */}
             {mode === "individual" && (
@@ -352,7 +551,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
                   <textarea placeholder="Briefly describe your MUN experience (if any)" value={form.experience} onChange={(e) => update("experience", e.target.value)} rows={3} className={`${inputClass} resize-none`} />
                 </div>
                 <button type="submit" disabled={loading} className="w-full font-heading text-sm px-6 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:shadow-[0_0_40px_hsl(190_80%_55%/0.3)] transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 mt-4">
-                  <Send size={16} /> {loading ? "Processing..." : "Pay ₹4"}
+                  <Send size={16} /> {loading ? "Processing..." : `Pay ₹${individualAmount / 100}`}
                 </button>
               </form>
             )}
@@ -367,7 +566,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-xs text-muted-foreground font-heading">
                     <span>{completedDelegates}/{delegates.length} delegates completed</span>
-                    <span>{delegates.length} × ₹4 = ₹{delegates.length * 4}</span>
+                    <span>{delegates.length} × ₹{perDelegatePrice / 100} = ₹{schoolAmount / 100}</span>
                   </div>
                   <div className="w-full h-2 rounded-full bg-card border border-border overflow-hidden">
                     <div
@@ -453,8 +652,136 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
                   disabled={loading || !isSchoolValid}
                   className="w-full font-heading text-sm px-6 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:shadow-[0_0_40px_hsl(190_80%_55%/0.3)] transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 mt-2"
                 >
-                  <Send size={16} /> {loading ? "Processing..." : `Pay ₹${delegates.length * 4} (${delegates.length} delegates)`}
+                  <Send size={16} /> {loading ? "Processing..." : `Pay ₹${schoolAmount / 100} (${delegates.length} delegates)`}
                 </button>
+              </div>
+            )}
+
+            {/* ─── UPGRADE FLOW ─── */}
+            {mode === "upgrade" && (
+              <div className="space-y-4">
+                {upgradeStep === "lookup" && (
+                  <>
+                    <p className="text-sm text-muted-foreground">
+                      Enter the <strong className="text-foreground">Payment ID</strong> we sent to you in your registration confirmation email.
+                    </p>
+                    <input
+                      type="text"
+                      placeholder="pay_XXXXXXXXXXXXXX"
+                      value={upgradePaymentIdInput}
+                      onChange={(e) => setUpgradePaymentIdInput(e.target.value)}
+                      className={inputClass}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleUpgradeLookup}
+                      disabled={loading || !upgradePaymentIdInput.trim()}
+                      className="w-full font-heading text-sm px-6 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold flex items-center justify-center gap-2 disabled:opacity-60"
+                    >
+                      <Search size={16} /> {loading ? "Looking up..." : "Find My Registration"}
+                    </button>
+                  </>
+                )}
+
+                {upgradeStep === "confirm" && (
+                  <>
+                    <p className="text-sm text-muted-foreground">
+                      We found <strong className="text-foreground">{upgradeDelegates.length}</strong> {upgradeDelegates.length > 1 ? "delegates" : "delegate"} under this Payment ID. Please confirm this is you:
+                    </p>
+                    <div className="rounded-xl border border-border bg-card/50 p-3 space-y-2 max-h-48 overflow-y-auto">
+                      {upgradeDelegates.map((d, i) => (
+                        <div key={d.id} className="text-sm">
+                          <div className="font-semibold text-foreground">{i + 1}. {d.name}</div>
+                          <div className="text-xs text-muted-foreground">{d.email} · {d.school} · Class {d.class}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Current package: <span className="font-semibold text-foreground">{CATEGORY_LABEL[upgradeCurrentCategory]}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={resetUpgrade}
+                        className="flex-1 px-4 py-3 rounded-full bg-card border border-border text-sm font-semibold text-muted-foreground hover:text-foreground"
+                      >
+                        Not me
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setUpgradeStep("choose")}
+                        className="flex-1 px-4 py-3 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground text-sm font-semibold flex items-center justify-center gap-2"
+                      >
+                        <CheckCircle2 size={16} /> Yes, that's me
+                      </button>
+                    </div>
+                  </>
+                )}
+
+                {upgradeStep === "choose" && (
+                  <>
+                    {upgradeOptions.length === 0 ? (
+                      <div className="text-sm text-center py-6">
+                        <p className="text-foreground font-semibold">You're already on the highest package.</p>
+                        <p className="text-muted-foreground mt-1">No further upgrade available.</p>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-sm text-muted-foreground">
+                          Choose your upgrade. You'll pay only the difference × {upgradeDelegates.length} delegate{upgradeDelegates.length > 1 ? "s" : ""}.
+                        </p>
+                        <div className="space-y-2">
+                          {upgradeOptions.map((c) => {
+                            const diff = CATEGORY_PRICE[c] - CATEGORY_PRICE[upgradeCurrentCategory];
+                            const total = diff * upgradeDelegates.length;
+                            const active = upgradeChoice === c;
+                            return (
+                              <button
+                                type="button"
+                                key={c}
+                                onClick={() => setUpgradeChoice(c)}
+                                className={`w-full text-left px-4 py-3 rounded-xl border transition-all ${
+                                  active ? "border-primary bg-primary/10 ring-2 ring-primary/30" : "border-border bg-card hover:border-primary/40"
+                                }`}
+                              >
+                                <div className="flex justify-between items-center">
+                                  <div>
+                                    <div className="text-sm font-semibold text-foreground">{CATEGORY_LABEL[c]}</div>
+                                    <div className="text-xs text-muted-foreground">+ ₹{diff / 100} per delegate</div>
+                                  </div>
+                                  <div className="text-base font-bold text-primary">₹{total / 100}</div>
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleUpgradePay}
+                          disabled={loading || !upgradeChoice}
+                          className="w-full font-heading text-sm px-6 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold flex items-center justify-center gap-2 disabled:opacity-60 mt-2"
+                        >
+                          <Send size={16} /> {loading ? "Processing..." : "Pay & Upgrade"}
+                        </button>
+                      </>
+                    )}
+                  </>
+                )}
+
+                {upgradeStep === "done" && (
+                  <div className="text-center py-6 space-y-3">
+                    <CheckCircle2 size={48} className="mx-auto text-primary" />
+                    <p className="text-foreground font-semibold">Upgrade complete!</p>
+                    <p className="text-sm text-muted-foreground">A confirmation email has been sent with your new payment ID.</p>
+                    <button
+                      type="button"
+                      onClick={() => { resetUpgrade(); onClose(); }}
+                      className="px-6 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-semibold"
+                    >
+                      Done
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </motion.div>
