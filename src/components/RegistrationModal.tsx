@@ -225,68 +225,40 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
       theme: { color: "#0ea5e9" },
       handler: async function (response: any) {
         try {
-          if (mode === "individual") {
-            const { error } = await supabase.from("registrations").insert({
-              name: form.name,
-              mobile: form.mobile,
-              email: form.email,
-              school: form.school,
-              class: form.class,
-              preference_1: form.pref1,
-              preference_2: form.pref2,
-              preference_3: form.pref3,
-              experience: form.experience || null,
-              razorpay_payment_id: response.razorpay_payment_id,
-              amount_paid: amount,
-              paid_at: new Date().toISOString(),
-              delegation_type: "individual",
+          const delegatePayload = mode === "individual"
+            ? [{
+                name: form.name, mobile: form.mobile, email: form.email,
+                school: form.school, class: form.class,
+                preference_1: form.pref1, preference_2: form.pref2, preference_3: form.pref3,
+                experience: form.experience || null,
+              }]
+            : delegates.map((d) => ({
+                name: d.name, mobile: d.mobile, email: d.email,
+                school: schoolName, class: d.class,
+                preference_1: d.pref1, preference_2: d.pref2, preference_3: d.pref3,
+                experience: d.experience || null,
+              }));
+          const { data: regData, error: regErr } = await supabase.functions.invoke("create-registration", {
+            body: {
+              delegation_type: mode,
               category,
-            });
-            if (error) throw error;
-            supabase.functions.invoke("send-thank-you-email", {
-              body: {
-                recipients: [{ name: form.name, email: form.email }],
-                paymentId: response.razorpay_payment_id,
-                category,
-              },
-            }).catch((e) => console.error("Thank-you email failed:", e));
-          } else {
-            const groupId = crypto.randomUUID();
-            const perDelegate = Math.floor(amount / delegates.length);
-            const rows = delegates.map((d) => ({
-              name: d.name,
-              mobile: d.mobile,
-              email: d.email,
-              school: schoolName,
-              class: d.class,
-              preference_1: d.pref1,
-              preference_2: d.pref2,
-              preference_3: d.pref3,
-              experience: d.experience || null,
+              delegates: delegatePayload,
+              school_name: mode === "school" ? schoolName : undefined,
+              razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
-              amount_paid: perDelegate,
-              paid_at: new Date().toISOString(),
-              delegation_type: "school",
-              delegation_group_id: groupId,
-              category,
-            }));
-            const { error } = await supabase.from("registrations").insert(rows);
-            if (error) throw error;
-            supabase.functions.invoke("send-thank-you-email", {
-              body: {
-                recipients: delegates.map((d) => ({ name: d.name, email: d.email })),
-                paymentId: response.razorpay_payment_id,
-                category,
-              },
-            }).catch((e) => console.error("Thank-you email failed:", e));
+              razorpay_signature: response.razorpay_signature,
+            },
+          });
+          if (regErr || (regData as any)?.error) {
+            throw new Error((regData as any)?.error || regErr?.message || "Could not save registration");
           }
           toast.success("Payment successful! Registration confirmed.", {
             description: `Payment ID: ${response.razorpay_payment_id}`,
           });
         } catch (err) {
           console.error("Failed to save registration:", err);
-          toast.success("Payment successful! Registration saved.", {
-            description: `Payment ID: ${response.razorpay_payment_id}`,
+          toast.error("Payment captured, but we couldn't save your registration.", {
+            description: `Please contact support with Payment ID: ${response.razorpay_payment_id}`,
           });
         }
         setLoading(false);
