@@ -2,7 +2,20 @@ import { useState } from "react";
 import { X, Send, Plus, Trash2, ChevronDown, ChevronUp, Users, User, ArrowUpCircle, Search, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+
+const PAYMENT_ID_REGEX = /^pay_[A-Za-z0-9]{14}$/;
+const paymentIdSchema = z
+  .string()
+  .trim()
+  .min(1, { message: "Payment ID is required" })
+  .regex(PAYMENT_ID_REGEX, {
+    message: 'Payment ID must look like "pay_" followed by 14 letters or numbers',
+  });
+
+const normalizePaymentId = (raw: string) =>
+  raw.trim().replace(/^['"]+|['"]+$/g, "");
 
 const committees = [
   "UNSC - United Nations Security Council",
