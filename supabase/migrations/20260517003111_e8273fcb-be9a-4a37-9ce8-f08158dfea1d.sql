@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Allow anonymous inserts" ON public.registrations;
