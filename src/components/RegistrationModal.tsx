@@ -471,30 +471,70 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
             <p className="text-sm text-muted-foreground font-body mb-4">Choose your delegation type to get started.</p>
 
             {/* Category Toggle */}
-            <div className="flex gap-2 mb-6">
+            <div className="flex gap-2 mb-5">
               <button
                 type="button"
                 onClick={() => setMode("individual")}
-                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all border ${
+                className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all border ${
                   mode === "individual"
                     ? "bg-primary text-primary-foreground border-primary shadow-lg"
                     : "bg-card border-border text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <User size={16} /> Individual
+                <User size={14} /> Individual
               </button>
               <button
                 type="button"
                 onClick={() => setMode("school")}
-                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold transition-all border ${
+                className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all border ${
                   mode === "school"
                     ? "bg-primary text-primary-foreground border-primary shadow-lg"
                     : "bg-card border-border text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <Users size={16} /> School Delegation
+                <Users size={14} /> School
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode("upgrade")}
+                className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all border ${
+                  mode === "upgrade"
+                    ? "bg-primary text-primary-foreground border-primary shadow-lg"
+                    : "bg-card border-border text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <ArrowUpCircle size={14} /> Upgrade
               </button>
             </div>
+
+            {/* Category picker (only for register flows) */}
+            {mode !== "upgrade" && (
+              <div className="mb-5">
+                <label className="text-xs text-muted-foreground font-heading uppercase tracking-wider mb-2 block">
+                  Choose Package
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {CATEGORIES.map((c) => {
+                    const active = category === c;
+                    return (
+                      <button
+                        type="button"
+                        key={c}
+                        onClick={() => setCategory(c)}
+                        className={`text-left px-3 py-2.5 rounded-xl border transition-all ${
+                          active
+                            ? "border-primary bg-primary/10 ring-2 ring-primary/30"
+                            : "border-border bg-card hover:border-primary/40"
+                        }`}
+                      >
+                        <div className="text-xs font-semibold text-foreground">{CATEGORY_SHORT[c]}</div>
+                        <div className="text-[11px] text-muted-foreground">₹{CATEGORY_PRICE[c] / 100} / delegate</div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
             {/* ─── INDIVIDUAL FORM ─── */}
             {mode === "individual" && (
@@ -511,7 +551,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
                   <textarea placeholder="Briefly describe your MUN experience (if any)" value={form.experience} onChange={(e) => update("experience", e.target.value)} rows={3} className={`${inputClass} resize-none`} />
                 </div>
                 <button type="submit" disabled={loading} className="w-full font-heading text-sm px-6 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:shadow-[0_0_40px_hsl(190_80%_55%/0.3)] transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 mt-4">
-                  <Send size={16} /> {loading ? "Processing..." : "Pay ₹4"}
+                  <Send size={16} /> {loading ? "Processing..." : `Pay ₹${individualAmount / 100}`}
                 </button>
               </form>
             )}
@@ -526,7 +566,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-xs text-muted-foreground font-heading">
                     <span>{completedDelegates}/{delegates.length} delegates completed</span>
-                    <span>{delegates.length} × ₹4 = ₹{delegates.length * 4}</span>
+                    <span>{delegates.length} × ₹{perDelegatePrice / 100} = ₹{schoolAmount / 100}</span>
                   </div>
                   <div className="w-full h-2 rounded-full bg-card border border-border overflow-hidden">
                     <div
@@ -612,8 +652,136 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
                   disabled={loading || !isSchoolValid}
                   className="w-full font-heading text-sm px-6 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:shadow-[0_0_40px_hsl(190_80%_55%/0.3)] transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-60 mt-2"
                 >
-                  <Send size={16} /> {loading ? "Processing..." : `Pay ₹${delegates.length * 4} (${delegates.length} delegates)`}
+                  <Send size={16} /> {loading ? "Processing..." : `Pay ₹${schoolAmount / 100} (${delegates.length} delegates)`}
                 </button>
+              </div>
+            )}
+
+            {/* ─── UPGRADE FLOW ─── */}
+            {mode === "upgrade" && (
+              <div className="space-y-4">
+                {upgradeStep === "lookup" && (
+                  <>
+                    <p className="text-sm text-muted-foreground">
+                      Enter the <strong className="text-foreground">Payment ID</strong> we sent to you in your registration confirmation email.
+                    </p>
+                    <input
+                      type="text"
+                      placeholder="pay_XXXXXXXXXXXXXX"
+                      value={upgradePaymentIdInput}
+                      onChange={(e) => setUpgradePaymentIdInput(e.target.value)}
+                      className={inputClass}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleUpgradeLookup}
+                      disabled={loading || !upgradePaymentIdInput.trim()}
+                      className="w-full font-heading text-sm px-6 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold flex items-center justify-center gap-2 disabled:opacity-60"
+                    >
+                      <Search size={16} /> {loading ? "Looking up..." : "Find My Registration"}
+                    </button>
+                  </>
+                )}
+
+                {upgradeStep === "confirm" && (
+                  <>
+                    <p className="text-sm text-muted-foreground">
+                      We found <strong className="text-foreground">{upgradeDelegates.length}</strong> {upgradeDelegates.length > 1 ? "delegates" : "delegate"} under this Payment ID. Please confirm this is you:
+                    </p>
+                    <div className="rounded-xl border border-border bg-card/50 p-3 space-y-2 max-h-48 overflow-y-auto">
+                      {upgradeDelegates.map((d, i) => (
+                        <div key={d.id} className="text-sm">
+                          <div className="font-semibold text-foreground">{i + 1}. {d.name}</div>
+                          <div className="text-xs text-muted-foreground">{d.email} · {d.school} · Class {d.class}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      Current package: <span className="font-semibold text-foreground">{CATEGORY_LABEL[upgradeCurrentCategory]}</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={resetUpgrade}
+                        className="flex-1 px-4 py-3 rounded-full bg-card border border-border text-sm font-semibold text-muted-foreground hover:text-foreground"
+                      >
+                        Not me
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setUpgradeStep("choose")}
+                        className="flex-1 px-4 py-3 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground text-sm font-semibold flex items-center justify-center gap-2"
+                      >
+                        <CheckCircle2 size={16} /> Yes, that's me
+                      </button>
+                    </div>
+                  </>
+                )}
+
+                {upgradeStep === "choose" && (
+                  <>
+                    {upgradeOptions.length === 0 ? (
+                      <div className="text-sm text-center py-6">
+                        <p className="text-foreground font-semibold">You're already on the highest package.</p>
+                        <p className="text-muted-foreground mt-1">No further upgrade available.</p>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-sm text-muted-foreground">
+                          Choose your upgrade. You'll pay only the difference × {upgradeDelegates.length} delegate{upgradeDelegates.length > 1 ? "s" : ""}.
+                        </p>
+                        <div className="space-y-2">
+                          {upgradeOptions.map((c) => {
+                            const diff = CATEGORY_PRICE[c] - CATEGORY_PRICE[upgradeCurrentCategory];
+                            const total = diff * upgradeDelegates.length;
+                            const active = upgradeChoice === c;
+                            return (
+                              <button
+                                type="button"
+                                key={c}
+                                onClick={() => setUpgradeChoice(c)}
+                                className={`w-full text-left px-4 py-3 rounded-xl border transition-all ${
+                                  active ? "border-primary bg-primary/10 ring-2 ring-primary/30" : "border-border bg-card hover:border-primary/40"
+                                }`}
+                              >
+                                <div className="flex justify-between items-center">
+                                  <div>
+                                    <div className="text-sm font-semibold text-foreground">{CATEGORY_LABEL[c]}</div>
+                                    <div className="text-xs text-muted-foreground">+ ₹{diff / 100} per delegate</div>
+                                  </div>
+                                  <div className="text-base font-bold text-primary">₹{total / 100}</div>
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleUpgradePay}
+                          disabled={loading || !upgradeChoice}
+                          className="w-full font-heading text-sm px-6 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold flex items-center justify-center gap-2 disabled:opacity-60 mt-2"
+                        >
+                          <Send size={16} /> {loading ? "Processing..." : "Pay & Upgrade"}
+                        </button>
+                      </>
+                    )}
+                  </>
+                )}
+
+                {upgradeStep === "done" && (
+                  <div className="text-center py-6 space-y-3">
+                    <CheckCircle2 size={48} className="mx-auto text-primary" />
+                    <p className="text-foreground font-semibold">Upgrade complete!</p>
+                    <p className="text-sm text-muted-foreground">A confirmation email has been sent with your new payment ID.</p>
+                    <button
+                      type="button"
+                      onClick={() => { resetUpgrade(); onClose(); }}
+                      className="px-6 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-semibold"
+                    >
+                      Done
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </motion.div>
