@@ -5,3 +5,15 @@ verify_jwt = false
 
 [functions.get-registrations]
 verify_jwt = false
+
+[functions.send-thank-you-email]
+verify_jwt = false
+
+[functions.send-upgrade-email]
+verify_jwt = false
+
+[functions.lookup-registration]
+verify_jwt = false
+
+[functions.apply-upgrade]
+verify_jwt = false
