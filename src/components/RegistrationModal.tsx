@@ -2,7 +2,20 @@ import { useState } from "react";
 import { X, Send, Plus, Trash2, ChevronDown, ChevronUp, Users, User, ArrowUpCircle, Search, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+
+const PAYMENT_ID_REGEX = /^pay_[A-Za-z0-9]{14}$/;
+const paymentIdSchema = z
+  .string()
+  .trim()
+  .min(1, { message: "Payment ID is required" })
+  .regex(PAYMENT_ID_REGEX, {
+    message: 'Payment ID must look like "pay_" followed by 14 letters or numbers',
+  });
+
+const normalizePaymentId = (raw: string) =>
+  raw.trim().replace(/^['"]+|['"]+$/g, "");
 
 const committees = [
   "UNSC - United Nations Security Council",
@@ -111,6 +124,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
   // Upgrade flow state
   const [upgradeStep, setUpgradeStep] = useState<"lookup" | "confirm" | "choose" | "done">("lookup");
   const [upgradePaymentIdInput, setUpgradePaymentIdInput] = useState("");
+  const [upgradeIdError, setUpgradeIdError] = useState<string | null>(null);
   const [upgradeDelegates, setUpgradeDelegates] = useState<any[]>([]);
   const [upgradeCurrentCategory, setUpgradeCurrentCategory] = useState<Category>("mun");
   const [upgradeChoice, setUpgradeChoice] = useState<Category | null>(null);
@@ -293,19 +307,32 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
 
   // ─── Upgrade flow ───
   const handleUpgradeLookup = async () => {
-    if (!upgradePaymentIdInput.trim()) {
-      toast.error("Enter your Payment ID");
+    const normalized = normalizePaymentId(upgradePaymentIdInput);
+    const parsed = paymentIdSchema.safeParse(normalized);
+    if (!parsed.success) {
+      const msg = parsed.error.issues[0]?.message ?? "Invalid Payment ID";
+      setUpgradeIdError(msg);
+      toast.error("Check your Payment ID", { description: msg });
       return;
     }
+    setUpgradeIdError(null);
+    setUpgradePaymentIdInput(parsed.data);
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("lookup-registration", {
-        body: { paymentId: upgradePaymentIdInput.trim() },
+        body: { paymentId: parsed.data },
       });
-      if (error) throw error;
+      if (error) {
+        console.error(error);
+        toast.error("Couldn't reach the server", {
+          description: "Please check your connection and try again.",
+        });
+        return;
+      }
       if (!data?.found) {
-        toast.error("No registration found with that Payment ID.");
-        setLoading(false);
+        const msg = "We couldn't find a registration with that Payment ID. Double-check the ID from your confirmation email.";
+        setUpgradeIdError("No registration found for this Payment ID");
+        toast.error("Registration not found", { description: msg });
         return;
       }
       setUpgradeDelegates(data.delegates);
@@ -314,7 +341,9 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
       setUpgradeStep("confirm");
     } catch (err) {
       console.error(err);
-      toast.error("Lookup failed. Please try again.");
+      toast.error("Lookup failed", {
+        description: "Something went wrong while looking up your Payment ID. Please try again or contact support.",
+      });
     } finally {
       setLoading(false);
     }
@@ -474,7 +503,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
             <div className="flex gap-2 mb-5">
               <button
                 type="button"
-                onClick={() => setMode("individual")}
+                onClick={() => { setMode("individual"); setUpgradeIdError(null); }}
                 className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all border ${
                   mode === "individual"
                     ? "bg-primary text-primary-foreground border-primary shadow-lg"
@@ -485,7 +514,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
               </button>
               <button
                 type="button"
-                onClick={() => setMode("school")}
+                onClick={() => { setMode("school"); setUpgradeIdError(null); }}
                 className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all border ${
                   mode === "school"
                     ? "bg-primary text-primary-foreground border-primary shadow-lg"
@@ -669,13 +698,37 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
                       type="text"
                       placeholder="pay_XXXXXXXXXXXXXX"
                       value={upgradePaymentIdInput}
-                      onChange={(e) => setUpgradePaymentIdInput(e.target.value)}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setUpgradePaymentIdInput(v);
+                        if (upgradeIdError && PAYMENT_ID_REGEX.test(normalizePaymentId(v))) {
+                          setUpgradeIdError(null);
+                        }
+                      }}
+                      onBlur={() => {
+                        const v = normalizePaymentId(upgradePaymentIdInput);
+                        if (!v) {
+                          setUpgradeIdError(null);
+                          return;
+                        }
+                        const parsed = paymentIdSchema.safeParse(v);
+                        setUpgradeIdError(parsed.success ? null : (parsed.error.issues[0]?.message ?? "Invalid Payment ID"));
+                      }}
+                      aria-invalid={!!upgradeIdError}
+                      aria-describedby="upgrade-payment-id-hint"
                       className={inputClass}
                     />
+                    {upgradeIdError ? (
+                      <p id="upgrade-payment-id-hint" className="text-xs text-destructive">{upgradeIdError}</p>
+                    ) : (
+                      <p id="upgrade-payment-id-hint" className="text-xs text-muted-foreground">
+                        Format: <code>pay_</code> followed by 14 letters or numbers.
+                      </p>
+                    )}
                     <button
                       type="button"
                       onClick={handleUpgradeLookup}
-                      disabled={loading || !upgradePaymentIdInput.trim()}
+                      disabled={loading || !PAYMENT_ID_REGEX.test(normalizePaymentId(upgradePaymentIdInput))}
                       className="w-full font-heading text-sm px-6 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold flex items-center justify-center gap-2 disabled:opacity-60"
                     >
                       <Search size={16} /> {loading ? "Looking up..." : "Find My Registration"}
