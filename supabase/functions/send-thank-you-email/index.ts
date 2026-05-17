@@ -12,15 +12,23 @@ interface Recipient {
   email: string;
 }
 
-const buildHtml = (name: string) => `
+const CATEGORY_LABELS: Record<string, string> = {
+  mun: "MUN",
+  mun_comedy_general: "MUN + Comedy Night (General)",
+  mun_comedy_fanpit: "MUN + Comedy Night (Fanpit)",
+};
+
+const buildHtml = (name: string, paymentId?: string, category?: string) => `
   <div style="font-family: Arial, sans-serif; color:#1a1a1a; line-height:1.6; font-size:15px;">
     <p>Dear ${name},</p>
     <p>Thank you for registering for <strong>Ashe MUN</strong>.</p>
     <p>We are excited to have you join us for an engaging and enriching Model United Nations experience. Your registration has been successfully received, and our team will review your application shortly.</p>
+    ${category ? `<p><strong>Registered Category:</strong> ${CATEGORY_LABELS[category] || category}</p>` : ""}
+    ${paymentId ? `<p style="background:#f4f6f8;padding:12px 14px;border-radius:8px;"><strong>Your Payment ID:</strong> <code style="font-family:monospace;">${paymentId}</code><br/><span style="font-size:13px;color:#444;">Please save this ID. You can use it later to <strong>upgrade your registration</strong> to a higher category from the registration page.</span></p>` : ""}
     <p>You will receive further updates regarding:</p>
     <ul>
       <li>Committee allotment</li>
-      <li>Payment confirmation (if applicable)</li>
+      <li>Payment confirmation</li>
       <li>Event schedule</li>
       <li>Delegate guidelines and resources</li>
     </ul>
@@ -31,15 +39,15 @@ const buildHtml = (name: string) => `
   </div>
 `;
 
-const buildText = (name: string) => `Dear ${name},
+const buildText = (name: string, paymentId?: string, category?: string) => `Dear ${name},
 
 Thank you for registering for Ashe MUN.
 
 We are excited to have you join us for an engaging and enriching Model United Nations experience. Your registration has been successfully received, and our team will review your application shortly.
-
+${category ? `\nRegistered Category: ${CATEGORY_LABELS[category] || category}\n` : ""}${paymentId ? `\nYour Payment ID: ${paymentId}\nPlease save this ID. You can use it later to upgrade your registration to a higher category from the registration page.\n` : ""}
 You will receive further updates regarding:
 • Committee allotment
-• Payment confirmation (if applicable)
+• Payment confirmation
 • Event schedule
 • Delegate guidelines and resources
 
@@ -64,6 +72,8 @@ Deno.serve(async (req) => {
     if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY is not configured");
 
     const body = await req.json().catch(() => ({}));
+    const paymentId: string | undefined = body?.paymentId;
+    const category: string | undefined = body?.category;
     const recipients: Recipient[] = Array.isArray(body?.recipients)
       ? body.recipients
       : body?.email
@@ -94,8 +104,8 @@ Deno.serve(async (req) => {
             from: "Ashe MUN <contact@ashemun.com>",
             to: [r.email],
             subject: "Thank You for Registering for Ashe MUN",
-            html: buildHtml(name),
-            text: buildText(name),
+            html: buildHtml(name, paymentId, category),
+            text: buildText(name, paymentId, category),
             reply_to: "contact@ashemun.com",
           }),
         });
