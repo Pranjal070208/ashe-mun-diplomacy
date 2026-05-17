@@ -291,6 +291,121 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
     rzp.open();
   };
 
+  // ─── Upgrade flow ───
+  const handleUpgradeLookup = async () => {
+    if (!upgradePaymentIdInput.trim()) {
+      toast.error("Enter your Payment ID");
+      return;
+    }
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("lookup-registration", {
+        body: { paymentId: upgradePaymentIdInput.trim() },
+      });
+      if (error) throw error;
+      if (!data?.found) {
+        toast.error("No registration found with that Payment ID.");
+        setLoading(false);
+        return;
+      }
+      setUpgradeDelegates(data.delegates);
+      const cur = (data.delegates[0]?.upgrade_category || data.delegates[0]?.category || "mun") as Category;
+      setUpgradeCurrentCategory(cur);
+      setUpgradeStep("confirm");
+    } catch (err) {
+      console.error(err);
+      toast.error("Lookup failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const upgradeOptions: Category[] = CATEGORIES.filter(
+    (c) => CATEGORY_TIER[c] > CATEGORY_TIER[upgradeCurrentCategory],
+  );
+
+  const handleUpgradePay = async () => {
+    if (!upgradeChoice) {
+      toast.error("Choose an upgrade option");
+      return;
+    }
+    const diff = CATEGORY_PRICE[upgradeChoice] - CATEGORY_PRICE[upgradeCurrentCategory];
+    const totalDiff = diff * upgradeDelegates.length;
+    setLoading(true);
+
+    let orderId: string;
+    let orderKey: string;
+    try {
+      const { data, error } = await supabase.functions.invoke("create-razorpay-order", {
+        body: {
+          amount: totalDiff,
+          currency: "INR",
+          receipt: `upg_${Date.now()}`,
+          notes: { type: "upgrade", originalPaymentId: upgradePaymentIdInput.trim(), newCategory: upgradeChoice },
+        },
+      });
+      if (error) throw error;
+      orderId = data.order_id;
+      orderKey = data.key_id || RAZORPAY_KEY;
+    } catch (err) {
+      console.error(err);
+      toast.error("Could not initiate payment. Please try again.");
+      setLoading(false);
+      return;
+    }
+
+    const firstDelegate = upgradeDelegates[0];
+    const options = {
+      key: orderKey,
+      order_id: orderId,
+      amount: totalDiff,
+      currency: "INR",
+      name: "Ashe MUN 2026",
+      description: `Upgrade to ${CATEGORY_LABEL[upgradeChoice]} (${upgradeDelegates.length} delegate${upgradeDelegates.length > 1 ? "s" : ""})`,
+      prefill: { name: firstDelegate?.name, email: firstDelegate?.email, contact: firstDelegate?.mobile },
+      theme: { color: "#0ea5e9" },
+      handler: async function (response: any) {
+        try {
+          const { error } = await supabase.functions.invoke("apply-upgrade", {
+            body: {
+              originalPaymentId: upgradePaymentIdInput.trim(),
+              newCategory: upgradeChoice,
+              newPaymentId: response.razorpay_payment_id,
+              expectedAmount: totalDiff,
+            },
+          });
+          if (error) throw error;
+          toast.success("Upgrade successful! A confirmation email has been sent.", {
+            description: `Payment ID: ${response.razorpay_payment_id}`,
+          });
+          setUpgradeStep("done");
+        } catch (err) {
+          console.error(err);
+          toast.error("Payment captured, but upgrade could not be applied. Contact support with your Payment ID.", {
+            description: `Payment ID: ${response.razorpay_payment_id}`,
+          });
+        } finally {
+          setLoading(false);
+        }
+      },
+      modal: { ondismiss: () => setLoading(false) },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.on("payment.failed", (response: any) => {
+      toast.error("Payment failed. Please try again.", { description: response.error.description });
+      setLoading(false);
+    });
+    rzp.open();
+  };
+
+  const resetUpgrade = () => {
+    setUpgradeStep("lookup");
+    setUpgradePaymentIdInput("");
+    setUpgradeDelegates([]);
+    setUpgradeChoice(null);
+  };
+
   const inputClass =
     "w-full px-4 py-3 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground text-sm font-body focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all";
   const selectClass =
