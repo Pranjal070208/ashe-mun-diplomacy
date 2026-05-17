@@ -503,7 +503,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
             <div className="flex gap-2 mb-5">
               <button
                 type="button"
-                onClick={() => setMode("individual")}
+                onClick={() => { setMode("individual"); setUpgradeIdError(null); }}
                 className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all border ${
                   mode === "individual"
                     ? "bg-primary text-primary-foreground border-primary shadow-lg"
@@ -514,7 +514,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
               </button>
               <button
                 type="button"
-                onClick={() => setMode("school")}
+                onClick={() => { setMode("school"); setUpgradeIdError(null); }}
                 className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all border ${
                   mode === "school"
                     ? "bg-primary text-primary-foreground border-primary shadow-lg"
