@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Globe, Mic, Scale, Handshake, Mail, Phone, MapPin, Instagram, Twitter, Linkedin, Youtube, Send } from "lucide-react";
+import { Globe, Mic, Scale, Handshake, Mail, Phone, Instagram } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import Marquee from "@/components/Marquee";
 import PageTransition from "@/components/PageTransition";
@@ -17,7 +17,7 @@ const features = [
 ];
 
 function Countdown() {
-  const target = new Date("2026-08-15T00:00:00").getTime();
+  const target = new Date("2026-06-24T00:00:00").getTime();
   const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
@@ -102,13 +102,13 @@ const Index = () => {
   return (
     <PageTransition>
       <SEO
-        title="Ashe MUN — Model United Nations Conference (Aug 15–17, 2026)"
+        title="Ashe MUN — Model United Nations Conference (June 24–25, 2026)"
         description="Ashe MUN 2026: a premier Model United Nations conference. Deliberate with Clarity. Debate with Passion. Deliver with Purpose. Register now."
         path="/"
       />
       {/* Hero */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
-        <h1 className="sr-only">Ashe MUN 2026 — Premier Model United Nations Conference (August 15–17, 2026)</h1>
+        <h1 className="sr-only">Ashe MUN 2026 — Premier Model United Nations Conference (June 24–25, 2026)</h1>
         {/* Video plays behind everything; only visible through the ASHE MUN text cutout */}
         <video
           src={heroBgVideo}
@@ -157,7 +157,7 @@ const Index = () => {
           className="relative z-10 text-center px-6 max-w-4xl mt-[44vh] sm:mt-[48vh]"
         >
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-secondary/30 text-secondary text-sm font-heading mb-8 bg-background/40 backdrop-blur-sm">
-            August 15–17, 2026
+            June 24–25, 2026
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
@@ -188,8 +188,8 @@ const Index = () => {
           <div className="grid grid-cols-3 gap-8 text-center">
             {[
               { value: 400, suffix: "+", label: "Delegates" },
-              { value: 8, suffix: "", label: "Committees" },
-              { value: 3, suffix: "", label: "Days" },
+              { value: 7, suffix: "", label: "Committees" },
+              { value: 2, suffix: "", label: "Days" },
             ].map((s, i) => (
               <div key={i} className={`${i > 0 ? "md:border-l md:border-border" : ""}`}>
                 <Counter target={s.value} suffix={s.suffix} />
@@ -252,7 +252,8 @@ const Index = () => {
               <div className="space-y-4">
                 {[
                   { icon: Mail, label: "Email", value: "contact@ashemun.com" },
-                  { icon: Phone, label: "Phone", value: "+91 9874563210" },
+                  { icon: Phone, label: "Arnav Awasthi", value: "+91 9569303507" },
+                  { icon: Phone, label: "Shivam Ahuja", value: "+91 9044793344" },
                 ].map((c, i) => (
                   <div key={i} className="glass-card p-5 flex items-center gap-4 hover:border-primary/20 transition-all">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
@@ -265,11 +266,15 @@ const Index = () => {
                   </div>
                 ))}
                 <div className="flex gap-3 pt-4">
-                  {[Instagram, Twitter, Linkedin, Youtube].map((Icon, i) => (
-                    <a key={i} href="#" className="w-10 h-10 rounded-full glass-card flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-all">
-                      <Icon size={16} />
-                    </a>
-                  ))}
+                  <a
+                    href="https://www.instagram.com/ashemun.official?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    aria-label="Instagram"
+                    className="w-10 h-10 rounded-full glass-card flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-all"
+                  >
+                    <Instagram size={16} />
+                  </a>
                 </div>
               </div>
             </AnimatedSection>

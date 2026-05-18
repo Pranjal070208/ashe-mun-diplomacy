@@ -1,13 +1,12 @@
 # Ashe MUN
 
-> Ashe MUN is a premier Model United Nations conference held August 15–17, 2026 in India. Deliberate with Clarity. Debate with Passion. Deliver with Purpose.
+> Ashe MUN is a premier Model United Nations conference held June 24–25, 2026 in India. Deliberate with Clarity. Debate with Passion. Deliver with Purpose.
 
 ## Pages
 
 - [Home](/): Conference overview, countdown, key information, and registration.
 - [About](/about): The story behind Ashe MUN, mission, and vision.
 - [Committees](/committees): The eight committees, agendas, and difficulty levels.
-- [Gallery](/gallery): Photos from past Ashe MUN conferences.
 
 ## Contact
 
