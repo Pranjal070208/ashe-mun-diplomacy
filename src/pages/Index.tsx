@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Globe, Mic, Scale, Handshake, Mail, Phone, Instagram } from "lucide-react";
+import { Globe, Mic, Scale, Handshake } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
 import Marquee from "@/components/Marquee";
 import PageTransition from "@/components/PageTransition";
@@ -88,16 +87,7 @@ function Counter({ target, suffix }: { target: number; suffix: string }) {
 }
 
 const Index = () => {
-  const location = useLocation();
   const [showRegistration, setShowRegistration] = useState(false);
-
-  useEffect(() => {
-    if (location.hash === "#contact") {
-      setTimeout(() => {
-        document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    }
-  }, [location]);
 
   return (
     <PageTransition>
@@ -159,20 +149,13 @@ const Index = () => {
           <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-secondary/30 text-secondary text-sm font-heading mb-8 bg-background/40 backdrop-blur-sm">
             June 24–25, 2026
           </div>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex items-center justify-center">
             <button
               onClick={() => setShowRegistration(true)}
-              className="font-heading text-sm px-8 py-3.5 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:shadow-[0_0_40px_hsl(190_80%_55%/0.3)] transition-all duration-300 hover:scale-105"
+              className="font-heading text-base md:text-lg px-12 md:px-16 py-5 md:py-6 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground font-semibold hover:shadow-[0_0_60px_hsl(190_80%_55%/0.4)] transition-all duration-300 hover:scale-105"
             >
               Register Now
             </button>
-            <Link
-              to="/about"
-              className="font-heading text-sm px-8 py-3.5 rounded-full border border-border text-foreground hover:border-primary/50 hover:text-primary transition-all duration-300"
-              aria-label="Learn more about Ashe MUN"
-            >
-              Learn More
-            </Link>
           </div>
         </motion.div>
 
@@ -185,9 +168,8 @@ const Index = () => {
       {/* Stats */}
       <section className="relative py-12 border-y border-border">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-3 gap-8 text-center">
+          <div className="grid grid-cols-2 gap-8 text-center">
             {[
-              { value: 400, suffix: "+", label: "Delegates" },
               { value: 7, suffix: "", label: "Committees" },
               { value: 2, suffix: "", label: "Days" },
             ].map((s, i) => (
@@ -238,49 +220,6 @@ const Index = () => {
       {/* Marquee */}
       <Marquee />
 
-      {/* Contact */}
-      <section id="contact" className="py-24 relative">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 section-glow opacity-20 pointer-events-none" />
-        <div className="container mx-auto px-6">
-          <AnimatedSection className="text-center mb-16">
-            <h2 className="font-display text-3xl md:text-5xl font-bold mb-4 gradient-text">Get In Touch</h2>
-            <div className="gradient-divider max-w-[120px] mx-auto" />
-          </AnimatedSection>
-
-          <div className="max-w-2xl mx-auto">
-            <AnimatedSection delay={0.1}>
-              <div className="space-y-4">
-                {[
-                  { icon: Mail, label: "Email", value: "contact@ashemun.com" },
-                  { icon: Phone, label: "Arnav Awasthi", value: "+91 9569303507" },
-                  { icon: Phone, label: "Shivam Ahuja", value: "+91 9044793344" },
-                ].map((c, i) => (
-                  <div key={i} className="glass-card p-5 flex items-center gap-4 hover:border-primary/20 transition-all">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <c.icon className="text-primary" size={18} />
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-muted-foreground font-heading uppercase tracking-wider">{c.label}</p>
-                      <p className="text-sm text-foreground font-body">{c.value}</p>
-                    </div>
-                  </div>
-                ))}
-                <div className="flex gap-3 pt-4">
-                  <a
-                    href="https://www.instagram.com/ashemun.official?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    aria-label="Instagram"
-                    className="w-10 h-10 rounded-full glass-card flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-all"
-                  >
-                    <Instagram size={16} />
-                  </a>
-                </div>
-              </div>
-            </AnimatedSection>
-          </div>
-        </div>
-      </section>
       <RegistrationModal open={showRegistration} onClose={() => setShowRegistration(false)} />
     </PageTransition>
   );

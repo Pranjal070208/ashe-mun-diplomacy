@@ -8,13 +8,12 @@ const navLinks = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
   { label: "Committees", to: "/committees" },
-  { label: "Contact", to: "/#contact" },
+  { label: "Contact", to: "/contact-us" },
 ];
 
 const Navbar = ({ onRegisterClick }: { onRegisterClick?: () => void }) => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [contactActive, setContactActive] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -26,40 +25,6 @@ const Navbar = ({ onRegisterClick }: { onRegisterClick?: () => void }) => {
   useEffect(() => {
     setMobileOpen(false);
   }, [location]);
-
-  // Mark Contact as active when hash is #contact, or when contact section is in view on home.
-  useEffect(() => {
-    const evaluate = () => {
-      if (location.hash === "#contact") {
-        setContactActive(true);
-        return;
-      }
-      if (location.pathname === "/") {
-        const el = document.getElementById("contact");
-        if (el) {
-          const r = el.getBoundingClientRect();
-          const vh = window.innerHeight;
-          setContactActive(r.top < vh * 0.6 && r.bottom > vh * 0.2);
-          return;
-        }
-      }
-      setContactActive(false);
-    };
-    evaluate();
-    window.addEventListener("scroll", evaluate, { passive: true });
-    window.addEventListener("hashchange", evaluate);
-    return () => {
-      window.removeEventListener("scroll", evaluate);
-      window.removeEventListener("hashchange", evaluate);
-    };
-  }, [location]);
-
-  const handleContactClick = (e: React.MouseEvent) => {
-    if (location.pathname === "/") {
-      e.preventDefault();
-      document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
-    }
-  };
 
   return (
     <>
@@ -76,15 +41,11 @@ const Navbar = ({ onRegisterClick }: { onRegisterClick?: () => void }) => {
           <div className="hidden md:flex items-center absolute left-1/2 -translate-x-1/2">
             <div className="flex items-center gap-1 px-2 py-1.5 rounded-full bg-muted/50 backdrop-blur-xl border border-border">
               {navLinks.map((l) => {
-                const isContact = l.to === "/#contact";
-                const isActive = isContact
-                  ? contactActive
-                  : location.pathname === l.to && !contactActive;
+                const isActive = location.pathname === l.to;
                 return (
                   <Link
                     key={l.to}
                     to={l.to}
-                    onClick={isContact ? handleContactClick : undefined}
                     className={`font-heading text-xs tracking-wide px-4 py-2 rounded-full transition-all duration-300 ${
                       isActive
                         ? "bg-primary/15 text-primary"
@@ -116,7 +77,6 @@ const Navbar = ({ onRegisterClick }: { onRegisterClick?: () => void }) => {
               <Link
                 key={l.to}
                 to={l.to}
-                onClick={l.to === "/#contact" ? handleContactClick : undefined}
                 className="font-display text-2xl tracking-tight hover:text-primary transition-colors"
               >
                 {l.label}
