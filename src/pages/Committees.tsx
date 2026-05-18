@@ -419,7 +419,14 @@ const Committees = () => {
         <div className="ashe-bars-area">
           <div className="ashe-bars-wrapper">
             {bars.map((b, i) => (
-              <div className="ashe-bar" key={i}>
+              <div
+                className={`ashe-bar${activeIndex === i ? " active" : ""}`}
+                key={i}
+                onClick={() => {
+                  if (window.innerWidth > 768) return;
+                  setActiveIndex((current) => (current === i ? null : i));
+                }}
+              >
                 <div className="ashe-bar-bg" style={{ backgroundImage: `url(${b.bg})` }} />
                 <div className="ashe-bar-gradient" />
                 <div className="ashe-bar-shimmer" />
