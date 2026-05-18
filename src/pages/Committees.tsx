@@ -326,12 +326,6 @@ const Committees = () => {
         <div className="ashe-scanline" />
         <div className="ashe-particles" id="ashe-particles" />
 
-        <header className="ashe-header">
-          <div className="ashe-eyebrow">Model United Nations</div>
-          <h1 className="ashe-title">COMMI<span>TTEES</span></h1>
-          <div className="ashe-divider" />
-        </header>
-
         <div className="ashe-bars-area">
           <div className="ashe-bars-wrapper">
             {bars.map((b, i) => (
