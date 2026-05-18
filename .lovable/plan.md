@@ -1,55 +1,59 @@
-## Goal
-Tighten Payment ID validation in the upgrade flow and surface clearer, friendlier errors when the input is empty, malformed, or not found.
-
-## Scope
-Frontend only — `src/components/RegistrationModal.tsx` upgrade tab. No backend or schema changes. Server-side `lookup-registration` already returns `{ found: false }` for misses, which we'll keep using.
-
-## Razorpay Payment ID format
-Razorpay payment IDs are of the shape `pay_` followed by 14 alphanumeric chars (e.g. `pay_NABCdef1234567`). We'll validate with:
-
-```
-/^pay_[A-Za-z0-9]{14}$/
-```
-
 ## Changes
 
-### 1. Add a zod schema + inline error state
-At the top of the upgrade section, define:
-```ts
-const paymentIdSchema = z
-  .string()
-  .trim()
-  .min(1, "Payment ID is required")
-  .regex(/^pay_[A-Za-z0-9]{14}$/, 'Payment ID must look like "pay_" followed by 14 letters/numbers');
-```
-Add `const [upgradeIdError, setUpgradeIdError] = useState<string | null>(null);`
+### 1. Social icons (Footer + Index Contact)
+- Replace the 4-icon array `[Instagram, Twitter, Linkedin, Youtube]` in `src/components/Footer.tsx` and `src/pages/Index.tsx` with a single Instagram link → `https://www.instagram.com/ashemun.official?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==` (target `_blank`, `rel="noreferrer noopener"`).
+- Drop Twitter/Linkedin/Youtube imports.
 
-### 2. Validate on input change and on submit
-- onChange: clear error if value now passes, otherwise leave silent until blur/submit
-- onBlur: run schema, set inline error message
-- `handleUpgradeLookup`: run schema first; on failure show toast + inline error and abort (no network call)
+### 2. Footer Support column
+- Remove the `FAQ` and `Delegate Resources` `<span>` entries in `src/components/Footer.tsx`, keep `Email Us`.
 
-### 3. Friendlier server-error messaging in `handleUpgradeLookup`
-Replace generic toasts:
-- Empty (shouldn't reach here after validation): `"Please enter your Payment ID."`
-- `data.found === false`: `"We couldn't find a registration with that Payment ID. Double-check the ID from your confirmation email."` + keep user on the lookup step with inline error
-- Network/edge error: `"We couldn't reach the server. Please check your connection and try again."`
-- Unknown: `"Something went wrong while looking up your Payment ID. Please try again or contact support."`
+### 3. Contact phone numbers (`src/pages/Index.tsx`)
+- Replace the single phone row with two rows:
+  - `+91 9569303507 — Arnav Awasthi`
+  - `+91 9044793344 — Shivam Ahuja`
+- Keep email row unchanged.
 
-Use `toast.error(title, { description })` so the message has a clear title + actionable detail.
+### 4. Hide Gallery everywhere
+- Remove the `Gallery` entry from `navLinks` in `src/components/Navbar.tsx`.
+- Remove the Gallery link from `src/components/Footer.tsx`.
+- Remove the `<Route path="/gallery">` and `Gallery` import in `src/App.tsx`.
+- Delete `src/pages/Gallery.tsx`.
+- Remove the `/gallery` URL from `public/sitemap.xml`.
+- Remove the Gallery line from `public/llms.txt`.
 
-### 4. UI affordances on the lookup step
-- Show inline red helper text under the input when `upgradeIdError` is set
-- Add aria-invalid + a small hint line: `Format: pay_ followed by 14 letters or numbers`
-- Disable submit button when input fails the regex (not just empty)
-- Trim+normalize value (strip surrounding whitespace and any accidental leading/trailing quotes) before validating
+### 5. URL change `abcxyzmun.lovable.app` → `ashemun.com`
+Update in:
+- `index.html` (og:url, JSON-LD url fields, Organization/WebSite urls, logo URL).
+- `src/components/SEO.tsx` (`SITE_URL`).
+- `public/sitemap.xml` (all `<loc>`).
+- `public/robots.txt` (Sitemap directive).
 
-### 5. Reset error state when user switches tabs or restarts upgrade flow
-Clear `upgradeIdError` and `upgradePaymentIdInput` when `mode` changes away from `upgrade` or when the upgrade flow completes/resets.
+### 6. Dates change Aug 15–17, 2026 → June 24–25, 2026
+Update in:
+- `public/llms.txt` (replace "August 15–17, 2026").
+- `index.html` JSON-LD: `startDate: "2026-06-24"`, `endDate: "2026-06-25"`.
+- `src/pages/Index.tsx`:
+  - Countdown target → `new Date("2026-06-24T00:00:00").getTime()`.
+  - Hero pill text `August 15–17, 2026` → `June 24–25, 2026`.
+  - SEO `title` and `<h1>` sr-only text → `June 24–25, 2026`.
 
-## Files touched
-- `src/components/RegistrationModal.tsx` (only)
+### 7. Stats counters (`src/pages/Index.tsx`)
+- Change Committees from `8` → `7`.
+- Change Days from `3` → `2`.
 
-## Out of scope
-- No changes to `lookup-registration`, `apply-upgrade`, DB, or email functions.
-- No changes to the individual/school registration flow.
+### 8. Committees page top padding (desktop)
+- Navbar is fixed (height `h-24 md:h-28` ≈ 112px). On desktop, `.ashe-bars-area` currently has `padding: 24px 40px 32px`, so the top of the bars sits behind the navbar (see attachment).
+- Update desktop padding in `src/pages/Committees.tsx` to `padding: 140px 40px 32px` (clears 112px navbar + breathing room). Mobile padding stays at `96px 12px 28px`.
+
+### Files touched
+- `src/components/Footer.tsx`
+- `src/components/Navbar.tsx`
+- `src/components/SEO.tsx`
+- `src/pages/Index.tsx`
+- `src/pages/Committees.tsx`
+- `src/App.tsx`
+- `src/pages/Gallery.tsx` (deleted)
+- `index.html`
+- `public/sitemap.xml`
+- `public/robots.txt`
+- `public/llms.txt`
