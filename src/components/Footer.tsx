@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
+import { Instagram } from "lucide-react";
 
 const Footer = () => (
   <footer className="border-t border-border bg-surface pt-16 pb-8">
@@ -18,25 +18,26 @@ const Footer = () => (
             <Link to="/" className="hover:text-primary transition-colors">Home</Link>
             <Link to="/about" className="hover:text-primary transition-colors">About</Link>
             <Link to="/committees" className="hover:text-primary transition-colors">Committees</Link>
-            <Link to="/gallery" className="hover:text-primary transition-colors">Gallery</Link>
           </div>
         </div>
         <div>
           <h5 className="font-heading text-xs uppercase tracking-wider text-primary mb-4">Support</h5>
           <div className="flex flex-col gap-2 text-sm text-muted-foreground font-body">
             <a href="mailto:contact@ashemun.org" className="hover:text-primary transition-colors">Email Us</a>
-            <span>FAQ</span>
-            <span>Delegate Resources</span>
           </div>
         </div>
         <div>
           <h5 className="font-heading text-xs uppercase tracking-wider text-primary mb-4">Follow Us</h5>
           <div className="flex gap-3">
-            {[Instagram, Twitter, Linkedin, Youtube].map((Icon, i) => (
-              <a key={i} href="#" className="w-9 h-9 rounded-full bg-muted/50 border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-all">
-                <Icon size={16} />
-              </a>
-            ))}
+            <a
+              href="https://www.instagram.com/ashemun.official?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+              target="_blank"
+              rel="noreferrer noopener"
+              aria-label="Instagram"
+              className="w-9 h-9 rounded-full bg-muted/50 border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/30 transition-all"
+            >
+              <Instagram size={16} />
+            </a>
           </div>
         </div>
       </div>
