@@ -341,7 +341,7 @@ const Committees = () => {
 
         @media (max-width: 768px) {
           .ashe-root { min-height: auto; overflow: visible; }
-          .ashe-bars-area { padding: 16px 12px 28px; display: block; height: auto; }
+          .ashe-bars-area { padding: 96px 12px 28px; display: block; height: auto; }
           .ashe-bars-wrapper {
             flex-direction: column; height: auto; gap: 10px;
             max-width: 100%; align-items: stretch;
