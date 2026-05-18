@@ -19,13 +19,14 @@ const normalizePaymentId = (raw: string) =>
 
 const committees = [
   "UNSC - United Nations Security Council",
-  "UNGA - United Nations General Assembly",
-  "WHO - World Health Organization",
-  "DISEC - Disarmament & International Security",
-  "ICJ - International Court of Justice",
-  "UNHRC - UN Human Rights Council",
+  "UNCND - United Nations Commission on Narcotics and Drugs",
+  "UNGA LEGAL - United Nations General Assembly",
+  "AD-HOC - Ad-Hoc Committee",
+  "CCS - Cabinet Committee on Security",
   "AIPPM - All India Political Parties Meet",
-  "CC - Crisis Committee",
+  "IPP - International Press Photography",
+  "IPJ - International Press Journalism",
+  "IPC - International Press Caricature",
 ];
 
 interface RegistrationModalProps {
