@@ -6,6 +6,7 @@ import Marquee from "@/components/Marquee";
 import PageTransition from "@/components/PageTransition";
 import RegistrationModal from "@/components/RegistrationModal";
 import SEO from "@/components/SEO";
+import heroBgVideo from "@/assets/hero-bg.mp4";
 
 const features = [
   { icon: Globe, title: "Global Network", desc: "Connect with delegates from institutions across the nation and build lasting relationships." },
@@ -98,9 +99,20 @@ const Index = () => {
       {/* Hero */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
         <h1 className="sr-only">Ashe MUN 2026 — Premier Model United Nations Conference (June 24–25, 2026)</h1>
+        {/* Hero background video */}
+        <video
+          src={heroBgVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover z-0"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-background/40 z-[1]" aria-hidden="true" />
         {/* ASHE MUN solid white wordmark */}
         <div
-          className="absolute inset-0 flex items-center justify-center pointer-events-none z-[1]"
+          className="absolute inset-0 flex items-center justify-center pointer-events-none z-[2]"
           aria-hidden="true"
         >
           <span
@@ -110,10 +122,10 @@ const Index = () => {
             ASHE MUN
           </span>
         </div>
-        <div className="absolute inset-0 noise-overlay pointer-events-none z-[2]" />
+        <div className="absolute inset-0 noise-overlay pointer-events-none z-[3]" />
         {/* Ambient glow orbs */}
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px] pointer-events-none z-[2]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-secondary/5 blur-[120px] pointer-events-none z-[2]" />
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px] pointer-events-none z-[3]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full bg-secondary/5 blur-[120px] pointer-events-none z-[3]" />
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
