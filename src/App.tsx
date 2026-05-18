@@ -16,6 +16,9 @@ import Committees from "./pages/Committees";
 import ContactUs from "./pages/ContactUs";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import RefundPolicy from "./pages/RefundPolicy";
+import TermsAndConditions from "./pages/TermsAndConditions";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +39,9 @@ function AnimatedRoutes() {
         <Route path="/about" element={<About />} />
         <Route path="/committees" element={<Committees />} />
         <Route path="/contact-us" element={<ContactUs />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/refund-policy" element={<RefundPolicy />} />
+        <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>

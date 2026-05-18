@@ -25,6 +25,9 @@ const Footer = () => (
           <h5 className="font-heading text-xs uppercase tracking-wider text-primary mb-4">Support</h5>
           <div className="flex flex-col gap-2 text-sm text-muted-foreground font-body">
             <a href="mailto:contact@ashemun.org" className="hover:text-primary transition-colors">Email Us</a>
+            <Link to="/privacy-policy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+            <Link to="/refund-policy" className="hover:text-primary transition-colors">Refund Policy</Link>
+            <Link to="/terms-and-conditions" className="hover:text-primary transition-colors">Terms & Conditions</Link>
           </div>
         </div>
         <div>
