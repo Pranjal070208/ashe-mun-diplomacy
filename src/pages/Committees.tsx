@@ -335,7 +335,9 @@ const Committees = () => {
           .ashe-bar {
             flex: none !important; width: 100%; height: 68px;
             border-radius: 14px;
-            transition: height 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.2s ease;
+            transition: height 180ms ease-out, box-shadow 180ms ease-out;
+            animation-delay: 0s !important;
+            touch-action: manipulation;
           }
           .ashe-bars-wrapper:has(.ashe-bar:hover) .ashe-bar:not(:hover) { flex: none; }
           .ashe-bar:hover { flex: none !important; }
@@ -343,9 +345,9 @@ const Committees = () => {
             height: 340px !important;
             box-shadow: 0 0 0 1px rgba(201,168,76,0.5), 0 10px 40px rgba(0,0,0,0.75), 0 0 40px rgba(201,168,76,0.08);
           }
-          .ashe-bar-bg { filter: brightness(0.32) saturate(0.6) !important; transition: filter 0.25s ease, transform 0.25s ease !important; }
+          .ashe-bar-bg { filter: brightness(0.32) saturate(0.6) !important; transition: filter 180ms ease-out, transform 180ms ease-out !important; }
           .ashe-bar.active .ashe-bar-bg { filter: brightness(0.45) saturate(0.9) !important; transform: scale(1.04) !important; }
-          .ashe-bar-gradient { transition: opacity 0.2s !important; }
+          .ashe-bar-gradient { transition: opacity 160ms ease-out !important; }
           .ashe-bar.active .ashe-bar-gradient { opacity: 0.15 !important; }
           .ashe-bar-shimmer { display: none; }
           .ashe-corner { display: none; }
@@ -364,7 +366,7 @@ const Committees = () => {
             z-index: 4 !important;
             opacity: 1 !important;
             transform: none !important;
-            transition: opacity 0.15s ease !important;
+            transition: opacity 120ms ease-out !important;
             pointer-events: auto !important;
           }
           .ashe-bar.active .ashe-collapsed { opacity: 0 !important; pointer-events: none !important; }
@@ -382,7 +384,7 @@ const Committees = () => {
             position: absolute !important; inset: 0 !important;
             gap: 7px !important; padding: 18px 16px !important;
             opacity: 0 !important; transform: translateY(10px) !important;
-            transition: opacity 0.2s 0.05s ease, transform 0.2s 0.05s ease !important;
+            transition: opacity 160ms ease-out, transform 160ms ease-out !important;
             pointer-events: none !important;
             overflow: hidden !important;
           }
