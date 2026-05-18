@@ -6,7 +6,6 @@ import Marquee from "@/components/Marquee";
 import PageTransition from "@/components/PageTransition";
 import RegistrationModal from "@/components/RegistrationModal";
 import SEO from "@/components/SEO";
-import heroBgVideo from "@/assets/hero-bg.mp4";
 
 const features = [
   { icon: Globe, title: "Global Network", desc: "Connect with delegates from institutions across the nation and build lasting relationships." },
@@ -99,42 +98,18 @@ const Index = () => {
       {/* Hero */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
         <h1 className="sr-only">Ashe MUN 2026 — Premier Model United Nations Conference (June 24–25, 2026)</h1>
-        {/* Video plays behind everything; only visible through the ASHE MUN text cutout */}
-        <video
-          src={heroBgVideo}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          {...({ fetchpriority: "high" } as Record<string, string>)}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        {/* Background overlay with text-shaped cutout — video shows through the letters only */}
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none z-[1]"
-          preserveAspectRatio="xMidYMid slice"
+        {/* ASHE MUN solid white wordmark */}
+        <div
+          className="absolute inset-0 flex items-center justify-center pointer-events-none z-[1]"
           aria-hidden="true"
         >
-          <defs>
-            <mask id="ashe-mun-cutout">
-              <rect width="100%" height="100%" fill="white" />
-              <text
-                x="50%"
-                y="50%"
-                textAnchor="middle"
-                dominantBaseline="central"
-                fontFamily="Space Grotesk, sans-serif"
-                fontWeight="700"
-                fill="black"
-                style={{ fontSize: "clamp(80px, 18vw, 300px)", letterSpacing: "-0.02em" }}
-              >
-                ASHE MUN
-              </text>
-            </mask>
-          </defs>
-          <rect width="100%" height="100%" fill="hsl(var(--background))" mask="url(#ashe-mun-cutout)" />
-        </svg>
+          <span
+            className="font-display font-bold text-white text-center"
+            style={{ fontSize: "clamp(80px, 18vw, 300px)", letterSpacing: "-0.02em", lineHeight: 1 }}
+          >
+            ASHE MUN
+          </span>
+        </div>
         <div className="absolute inset-0 noise-overlay pointer-events-none z-[2]" />
         {/* Ambient glow orbs */}
         <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full bg-primary/5 blur-[120px] pointer-events-none z-[2]" />
