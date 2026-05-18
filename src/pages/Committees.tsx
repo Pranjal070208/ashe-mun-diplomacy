@@ -157,7 +157,7 @@ const Committees = () => {
           position: relative; z-index: 5;
           flex: 1; display: flex;
           align-items: center; justify-content: center;
-          padding: 24px 40px 32px;
+          padding: 140px 40px 32px;
         }
         .ashe-bars-wrapper {
           display: flex; flex-direction: row;
