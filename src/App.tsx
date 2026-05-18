@@ -13,7 +13,6 @@ import Footer from "@/components/Footer";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Committees from "./pages/Committees";
-import Gallery from "./pages/Gallery";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
@@ -35,7 +34,6 @@ function AnimatedRoutes() {
         <Route path="/" element={<Index />} />
         <Route path="/about" element={<About />} />
         <Route path="/committees" element={<Committees />} />
-        <Route path="/gallery" element={<Gallery />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>
