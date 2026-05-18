@@ -7,7 +7,6 @@ import PageTransition from "@/components/PageTransition";
 import RegistrationModal from "@/components/RegistrationModal";
 import SEO from "@/components/SEO";
 import heroBgVideo from "@/assets/hero-bg.mp4";
-import asheLogo from "@/assets/ashemun-logo.png";
 
 const features = [
   { icon: Globe, title: "Global Network", desc: "Connect with delegates from institutions across the nation and build lasting relationships." },
@@ -111,17 +110,6 @@ const Index = () => {
           aria-hidden="true"
         />
         <div className="absolute inset-0 bg-background/40 z-[1]" aria-hidden="true" />
-        {/* Ashe MUN crest background */}
-        <div
-          className="absolute inset-0 flex items-center justify-center pointer-events-none z-[1]"
-          aria-hidden="true"
-        >
-          <img
-            src={asheLogo}
-            alt=""
-            className="w-[min(90vw,820px)] h-auto opacity-90 drop-shadow-[0_0_60px_rgba(0,0,0,0.5)]"
-          />
-        </div>
         {/* ASHE MUN solid white wordmark */}
         <div
           className="absolute inset-0 flex items-center justify-center pointer-events-none z-[2]"
