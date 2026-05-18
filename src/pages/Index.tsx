@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Globe, Mic, Scale, Handshake } from "lucide-react";
 import AnimatedSection from "@/components/AnimatedSection";
@@ -88,7 +87,6 @@ function Counter({ target, suffix }: { target: number; suffix: string }) {
 }
 
 const Index = () => {
-  const location = useLocation();
   const [showRegistration, setShowRegistration] = useState(false);
 
   return (
