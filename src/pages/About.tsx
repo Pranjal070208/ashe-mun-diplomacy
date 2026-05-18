@@ -3,7 +3,7 @@ import PageHero from "@/components/PageHero";
 import AnimatedSection from "@/components/AnimatedSection";
 import PageTransition from "@/components/PageTransition";
 import SEO from "@/components/SEO";
-import asheMunLogo from "@/assets/ashe-mun-logo.jpg";
+import asheMunLogo from "@/assets/ashe-mun-logo.png";
 
 const About = () => (
   <PageTransition>
