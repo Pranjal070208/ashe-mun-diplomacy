@@ -9,10 +9,10 @@ import SEO from "@/components/SEO";
 import heroBgVideo from "@/assets/hero-bg.mp4";
 
 const features = [
-  { icon: Globe, title: "Global Network", desc: "Connect with delegates from institutions across the nation and build lasting relationships." },
-  { icon: Mic, title: "Expert Speakers", desc: "Learn from seasoned diplomats and thought leaders shaping the global discourse." },
-  { icon: Scale, title: "Intense Debates", desc: "Engage in rigorous procedure on the most pressing international issues." },
-  { icon: Handshake, title: "Negotiation Skills", desc: "Master consensus-building, bloc formation, and resolution drafting." },
+  { icon: Globe, title: "Exceptional Diplomatic Platform", desc: "Ashe MUN streamlines a shrewdly rigorous environment to refine diplomatic skills, negotiation, public speaking, and excellence through committee sessions." },
+  { icon: Mic, title: "Leadership Rooted in Action", desc: "Guided by the principles of Initiate • Integrate • Implement, the conference empowers participants to emerge as sagacious leaders, driven by the spirit of meaningful and constructive change." },
+  { icon: Scale, title: "Standards of Competitive Engagement", desc: "With meticulously curated committees, handpicked Executive Boards, and perfectly tailored agendas, Ashe MUN delivers an experience defined by value." },
+  { icon: Handshake, title: "A Platform of Ambition", desc: "Ashe MUN brings together a landscape of delegates from diverse institutions, giving route to collaboration, exchange of understanding, and a deeper dive into the network of global affairs through diverse deliberations." },
 ];
 
 function Countdown() {
