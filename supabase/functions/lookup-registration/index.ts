@@ -23,7 +23,7 @@ Deno.serve(async (req) => {
 
     const { data, error } = await supabase
       .from("registrations")
-      .select("id, name, email, mobile, school, class, delegation_type, delegation_group_id, category, upgrade_category, razorpay_payment_id, amount_paid")
+      .select("id, name, email, mobile, school, class, delegation_type, delegation_group_id, category, upgrade_category, razorpay_payment_id, amount_paid, refunded, refunded_amount, refunded_at, refund_status, refund_id")
       .eq("razorpay_payment_id", paymentId.trim())
       .order("created_at", { ascending: true });
 
@@ -31,6 +31,17 @@ Deno.serve(async (req) => {
 
     if (!data || data.length === 0) {
       return new Response(JSON.stringify({ found: false }), {
+        status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    if (data.some((row: any) => row.refunded)) {
+      return new Response(JSON.stringify({
+        found: true,
+        blocked: true,
+        message: "This payment has been refunded. Upgrade is not allowed.",
+        delegates: data,
+      }), {
         status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }

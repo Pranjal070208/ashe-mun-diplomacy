@@ -123,7 +123,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
   const [loading, setLoading] = useState(false);
 
   // Upgrade flow state
-  const [upgradeStep, setUpgradeStep] = useState<"lookup" | "confirm" | "choose" | "done">("lookup");
+  const [upgradeStep, setUpgradeStep] = useState<"lookup" | "confirm" | "choose" | "blocked" | "done">("lookup");
   const [upgradePaymentIdInput, setUpgradePaymentIdInput] = useState("");
   const [upgradeIdError, setUpgradeIdError] = useState<string | null>(null);
   const [upgradeDelegates, setUpgradeDelegates] = useState<any[]>([]);
@@ -308,6 +308,14 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
         toast.error("Registration not found", { description: msg });
         return;
       }
+      if (data?.blocked) {
+        const msg = data.message || "This payment has been refunded. Upgrade is not allowed.";
+        setUpgradeDelegates(data.delegates || []);
+        setUpgradeIdError(msg);
+        setUpgradeStep("blocked");
+        toast.error(msg);
+        return;
+      }
       setUpgradeDelegates(data.delegates);
       const cur = (data.delegates[0]?.upgrade_category || data.delegates[0]?.category || "mun") as Category;
       setUpgradeCurrentCategory(cur);
@@ -327,6 +335,11 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
   );
 
   const handleUpgradePay = async () => {
+    if (upgradeDelegates.some((delegate) => delegate.refunded)) {
+      toast.error("This payment has been refunded. Upgrade is not allowed.");
+      setUpgradeStep("blocked");
+      return;
+    }
     if (!upgradeChoice) {
       toast.error("Choose an upgrade option");
       return;
@@ -404,6 +417,7 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
   const resetUpgrade = () => {
     setUpgradeStep("lookup");
     setUpgradePaymentIdInput("");
+    setUpgradeIdError(null);
     setUpgradeDelegates([]);
     setUpgradeChoice(null);
   };
@@ -742,6 +756,24 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
                       </button>
                     </div>
                   </>
+                )}
+
+                {upgradeStep === "blocked" && (
+                  <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4 space-y-3">
+                    <p className="text-sm font-semibold text-destructive">This payment has been refunded. Upgrade is not allowed.</p>
+                    {upgradeDelegates.length > 0 && (
+                      <p className="text-xs text-muted-foreground">
+                        Refund ID: <span className="font-mono text-foreground">{upgradeDelegates[0]?.refund_id || "—"}</span>
+                      </p>
+                    )}
+                    <button
+                      type="button"
+                      onClick={resetUpgrade}
+                      className="w-full px-4 py-3 rounded-full bg-card border border-border text-sm font-semibold text-muted-foreground hover:text-foreground"
+                    >
+                      Try another Payment ID
+                    </button>
+                  </div>
                 )}
 
                 {upgradeStep === "choose" && (
