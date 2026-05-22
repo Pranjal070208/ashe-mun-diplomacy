@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Lock, LogOut, RefreshCw, Download } from "lucide-react";
+import { Lock, LogOut, RefreshCw, Download, RotateCw } from "lucide-react";
 import * as XLSX from "xlsx";
 
 interface Registration {
@@ -28,6 +28,7 @@ interface Registration {
   refunded_amount: number | null;
   refunded_at: string | null;
   refund_status: string | null;
+  refund_id: string | null;
 }
 
 const CATEGORY_LABEL: Record<string, string> = {
@@ -44,6 +45,7 @@ const Admin = () => {
   const [error, setError] = useState("");
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [loading, setLoading] = useState(false);
+  const [syncing, setSyncing] = useState(false);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -104,6 +106,36 @@ const Admin = () => {
     setLoading(false);
   };
 
+  const handleSyncRefunds = async () => {
+    if (!storedCreds.username) return;
+    setSyncing(true);
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/sync-refunds`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: JSON.stringify({ username: storedCreds.username, password: storedCreds.password }),
+        },
+      );
+      const result = await res.json();
+      if (result?.success) {
+        alert(`Checked ${result.checked} payments. Found ${result.refundedFound} refunded.`);
+        await fetchRegistrations();
+      } else {
+        alert(`Sync failed: ${result?.error || "unknown error"}`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Sync failed");
+    } finally {
+      setSyncing(false);
+    }
+  };
+
   const handleDownload = () => {
     if (registrations.length === 0) return;
     const data = registrations.map((r, i) => ({
@@ -130,6 +162,7 @@ const Admin = () => {
       "Refund Status": r.refund_status || "",
       "Refunded Amount": r.refunded_amount != null ? r.refunded_amount / 100 : "",
       "Refunded At": r.refunded_at ? new Date(r.refunded_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "medium" }) : "",
+      "Refund ID": r.refund_id || "",
     }));
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
@@ -190,6 +223,13 @@ const Admin = () => {
             <RefreshCw size={14} className={loading ? "animate-spin" : ""} /> Refresh
           </button>
           <button
+            onClick={handleSyncRefunds}
+            disabled={syncing}
+            className="px-4 py-2 rounded-xl bg-card border border-border text-foreground text-sm flex items-center gap-2 hover:bg-muted transition disabled:opacity-50"
+          >
+            <RotateCw size={14} className={syncing ? "animate-spin" : ""} /> Sync Refunds
+          </button>
+          <button
             onClick={handleDownload}
             disabled={registrations.length === 0}
             className="px-4 py-2 rounded-xl bg-card border border-border text-foreground text-sm flex items-center gap-2 hover:bg-muted transition disabled:opacity-50"
@@ -209,7 +249,7 @@ const Admin = () => {
         <table className="w-full text-sm text-foreground">
           <thead className="bg-card border-b border-border">
             <tr>
-              {["#", "Type", "Group", "Category", "Name", "Mobile", "Email", "School", "Class", "Pref 1", "Pref 2", "Pref 3", "Experience", "Payment ID", "Paid At", "Upgraded To", "Upgrade Pay ID", "Upgrade ₹", "Upgraded At", "Refund"].map((h) => (
+              {["#", "Type", "Group", "Category", "Name", "Mobile", "Email", "School", "Class", "Pref 1", "Pref 2", "Pref 3", "Experience", "Payment ID", "Paid At", "Upgraded To", "Upgrade Pay ID", "Upgrade ₹", "Upgraded At", "Refund", "Refund ID"].map((h) => (
                 <th key={h} className="px-4 py-3 text-left text-xs font-heading uppercase tracking-wider text-muted-foreground whitespace-nowrap">
                   {h}
                 </th>
@@ -263,11 +303,12 @@ const Admin = () => {
                     <span className="text-muted-foreground">—</span>
                   )}
                 </td>
+                <td className="px-4 py-3 whitespace-nowrap font-mono text-xs">{r.refund_id || "—"}</td>
               </tr>
             ))}
             {registrations.length === 0 && (
               <tr>
-                <td colSpan={20} className="px-4 py-8 text-center text-muted-foreground">
+                <td colSpan={21} className="px-4 py-8 text-center text-muted-foreground">
                   No registrations yet.
                 </td>
               </tr>
