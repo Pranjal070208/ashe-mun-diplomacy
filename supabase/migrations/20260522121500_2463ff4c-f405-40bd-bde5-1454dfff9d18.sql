@@ -1,0 +1,1 @@
+ALTER TABLE public.registrations ADD COLUMN IF NOT EXISTS refund_id text, ADD COLUMN IF NOT EXISTS refund_email_sent_at timestamptz;

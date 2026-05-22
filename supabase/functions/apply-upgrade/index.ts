@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
 
     const { data: rows, error: fetchErr } = await supabase
       .from("registrations")
-      .select("id, name, email, category, upgrade_category, delegation_type, refunded")
+      .select("id, name, email, category, upgrade_category, delegation_type, refunded, refund_email_sent_at")
       .eq("razorpay_payment_id", String(originalPaymentId).trim());
 
     if (fetchErr) throw fetchErr;
@@ -49,8 +49,63 @@ Deno.serve(async (req) => {
       });
     }
 
+    const pid = String(originalPaymentId).trim();
+
+    const sendRefundEmailOnce = async (
+      refundedAmount: number,
+      refundStatus: string,
+      refundId: string,
+      refundedAt: string,
+    ) => {
+      if (rows.some((r: any) => r.refund_email_sent_at)) return;
+      try {
+        await supabase.functions.invoke("send-refund-email", {
+          body: {
+            recipients: rows.map((r: any) => ({ name: r.name, email: r.email })),
+            originalPaymentId: pid,
+            refundId,
+            refundedAmount,
+            refundStatus,
+            category: rows[0]?.upgrade_category || rows[0]?.category,
+            refundedAt,
+          },
+        });
+        await supabase
+          .from("registrations")
+          .update({ refund_email_sent_at: new Date().toISOString() })
+          .eq("razorpay_payment_id", pid);
+      } catch (e) {
+        console.error("refund email invoke failed", e);
+      }
+    };
+
     // Block upgrade if already marked refunded locally
     if (rows.some((r: any) => r.refunded)) {
+      // Best-effort: send refund email if not yet sent (fetch refund_id from Razorpay)
+      try {
+        const keyId = Deno.env.get("RAZORPAY_KEY_ID")!;
+        const keySecret = Deno.env.get("RAZORPAY_KEY_SECRET")!;
+        const auth = btoa(`${keyId}:${keySecret}`);
+        const refundsRes = await fetch(
+          `https://api.razorpay.com/v1/payments/${encodeURIComponent(pid)}/refunds`,
+          { headers: { Authorization: `Basic ${auth}` } },
+        );
+        if (refundsRes.ok) {
+          const refundsBody: any = await refundsRes.json();
+          const items: any[] = Array.isArray(refundsBody?.items) ? refundsBody.items : [];
+          const latest = items.sort((a, b) => Number(b.created_at || 0) - Number(a.created_at || 0))[0];
+          if (latest) {
+            await sendRefundEmailOnce(
+              Number(latest.amount || 0),
+              String(latest.status || "refunded"),
+              String(latest.id || ""),
+              new Date(Number(latest.created_at || 0) * 1000).toISOString(),
+            );
+          }
+        }
+      } catch (e) {
+        console.error("refund fetch (locally refunded) failed", e);
+      }
       return new Response(JSON.stringify({ error: "This payment has been refunded. Upgrade is not allowed." }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -62,7 +117,7 @@ Deno.serve(async (req) => {
       const keySecret = Deno.env.get("RAZORPAY_KEY_SECRET")!;
       const auth = btoa(`${keyId}:${keySecret}`);
       const rzpRes = await fetch(
-        `https://api.razorpay.com/v1/payments/${encodeURIComponent(String(originalPaymentId).trim())}`,
+        `https://api.razorpay.com/v1/payments/${encodeURIComponent(pid)}`,
         { headers: { Authorization: `Basic ${auth}` } },
       );
       if (rzpRes.ok) {
@@ -70,15 +125,40 @@ Deno.serve(async (req) => {
         const amountRefunded = Number(payment.amount_refunded || 0);
         const refundStatus: string | null = payment.refund_status ?? null;
         if (amountRefunded > 0 || refundStatus === "partial" || refundStatus === "full") {
+          // Fetch refund_id from refunds list
+          let refundId = "";
+          let refundCreatedAt = new Date().toISOString();
+          try {
+            const refundsRes = await fetch(
+              `https://api.razorpay.com/v1/payments/${encodeURIComponent(pid)}/refunds`,
+              { headers: { Authorization: `Basic ${auth}` } },
+            );
+            if (refundsRes.ok) {
+              const refundsBody: any = await refundsRes.json();
+              const items: any[] = Array.isArray(refundsBody?.items) ? refundsBody.items : [];
+              const latest = items.sort((a, b) => Number(b.created_at || 0) - Number(a.created_at || 0))[0];
+              if (latest) {
+                refundId = String(latest.id || "");
+                if (latest.created_at) refundCreatedAt = new Date(Number(latest.created_at) * 1000).toISOString();
+              }
+            }
+          } catch (e) {
+            console.error("refund list fetch failed", e);
+          }
+
           await supabase
             .from("registrations")
             .update({
               refunded: true,
               refunded_amount: amountRefunded,
-              refunded_at: new Date().toISOString(),
+              refunded_at: refundCreatedAt,
               refund_status: refundStatus || "refunded",
+              refund_id: refundId || null,
             })
-            .eq("razorpay_payment_id", String(originalPaymentId).trim());
+            .eq("razorpay_payment_id", pid);
+
+          await sendRefundEmailOnce(amountRefunded, refundStatus || "refunded", refundId, refundCreatedAt);
+
           return new Response(
             JSON.stringify({ error: "This payment has been refunded. Upgrade is not allowed." }),
             { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
