@@ -24,6 +24,10 @@ interface Registration {
   upgrade_payment_id: string | null;
   upgrade_amount: number | null;
   upgraded_at: string | null;
+  refunded: boolean;
+  refunded_amount: number | null;
+  refunded_at: string | null;
+  refund_status: string | null;
 }
 
 const CATEGORY_LABEL: Record<string, string> = {
