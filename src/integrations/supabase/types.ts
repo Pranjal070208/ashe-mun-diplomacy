@@ -32,6 +32,10 @@ export type Database = {
           preference_2: string
           preference_3: string
           razorpay_payment_id: string | null
+          refund_status: string | null
+          refunded: boolean
+          refunded_amount: number | null
+          refunded_at: string | null
           school: string
           upgrade_amount: number | null
           upgrade_category: string | null
@@ -55,6 +59,10 @@ export type Database = {
           preference_2: string
           preference_3: string
           razorpay_payment_id?: string | null
+          refund_status?: string | null
+          refunded?: boolean
+          refunded_amount?: number | null
+          refunded_at?: string | null
           school: string
           upgrade_amount?: number | null
           upgrade_category?: string | null
@@ -78,6 +86,10 @@ export type Database = {
           preference_2?: string
           preference_3?: string
           razorpay_payment_id?: string | null
+          refund_status?: string | null
+          refunded?: boolean
+          refunded_amount?: number | null
+          refunded_at?: string | null
           school?: string
           upgrade_amount?: number | null
           upgrade_category?: string | null

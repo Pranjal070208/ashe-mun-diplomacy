@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
 
     const { data: rows, error: fetchErr } = await supabase
       .from("registrations")
-      .select("id, name, email, category, upgrade_category, delegation_type")
+      .select("id, name, email, category, upgrade_category, delegation_type, refunded")
       .eq("razorpay_payment_id", String(originalPaymentId).trim());
 
     if (fetchErr) throw fetchErr;
@@ -47,6 +47,48 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: "Registration not found" }), {
         status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    // Block upgrade if already marked refunded locally
+    if (rows.some((r: any) => r.refunded)) {
+      return new Response(JSON.stringify({ error: "This payment has been refunded. Upgrade is not allowed." }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Live refund check against Razorpay
+    try {
+      const keyId = Deno.env.get("RAZORPAY_KEY_ID")!;
+      const keySecret = Deno.env.get("RAZORPAY_KEY_SECRET")!;
+      const auth = btoa(`${keyId}:${keySecret}`);
+      const rzpRes = await fetch(
+        `https://api.razorpay.com/v1/payments/${encodeURIComponent(String(originalPaymentId).trim())}`,
+        { headers: { Authorization: `Basic ${auth}` } },
+      );
+      if (rzpRes.ok) {
+        const payment: any = await rzpRes.json();
+        const amountRefunded = Number(payment.amount_refunded || 0);
+        const refundStatus: string | null = payment.refund_status ?? null;
+        if (amountRefunded > 0 || refundStatus === "partial" || refundStatus === "full") {
+          await supabase
+            .from("registrations")
+            .update({
+              refunded: true,
+              refunded_amount: amountRefunded,
+              refunded_at: new Date().toISOString(),
+              refund_status: refundStatus || "refunded",
+            })
+            .eq("razorpay_payment_id", String(originalPaymentId).trim());
+          return new Response(
+            JSON.stringify({ error: "This payment has been refunded. Upgrade is not allowed." }),
+            { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+          );
+        }
+      } else {
+        console.warn("Razorpay refund check failed", rzpRes.status);
+      }
+    } catch (e) {
+      console.error("Razorpay refund check error", e);
     }
 
     // Determine current effective category (upgrade_category if present, else category)
