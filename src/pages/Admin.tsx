@@ -126,6 +126,10 @@ const Admin = () => {
       "Upgrade Payment ID": r.upgrade_payment_id || "",
       "Upgrade Amount": r.upgrade_amount != null ? r.upgrade_amount / 100 : "",
       "Upgraded At": r.upgraded_at ? new Date(r.upgraded_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "medium" }) : "",
+      "Refunded": r.refunded ? "Yes" : "No",
+      "Refund Status": r.refund_status || "",
+      "Refunded Amount": r.refunded_amount != null ? r.refunded_amount / 100 : "",
+      "Refunded At": r.refunded_at ? new Date(r.refunded_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "medium" }) : "",
     }));
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
@@ -205,7 +209,7 @@ const Admin = () => {
         <table className="w-full text-sm text-foreground">
           <thead className="bg-card border-b border-border">
             <tr>
-              {["#", "Type", "Group", "Category", "Name", "Mobile", "Email", "School", "Class", "Pref 1", "Pref 2", "Pref 3", "Experience", "Payment ID", "Paid At", "Upgraded To", "Upgrade Pay ID", "Upgrade ₹", "Upgraded At"].map((h) => (
+              {["#", "Type", "Group", "Category", "Name", "Mobile", "Email", "School", "Class", "Pref 1", "Pref 2", "Pref 3", "Experience", "Payment ID", "Paid At", "Upgraded To", "Upgrade Pay ID", "Upgrade ₹", "Upgraded At", "Refund"].map((h) => (
                 <th key={h} className="px-4 py-3 text-left text-xs font-heading uppercase tracking-wider text-muted-foreground whitespace-nowrap">
                   {h}
                 </th>
@@ -214,7 +218,7 @@ const Admin = () => {
           </thead>
           <tbody>
             {registrations.map((r, i) => (
-              <tr key={r.id} className="border-b border-border/50 hover:bg-card/50 transition">
+              <tr key={r.id} className={`border-b border-border/50 hover:bg-card/50 transition ${r.refunded ? "bg-destructive/5" : ""}`}>
                 <td className="px-4 py-3 text-muted-foreground">{i + 1}</td>
                 <td className="px-4 py-3 whitespace-nowrap">
                   <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${r.delegation_type === "school" ? "bg-secondary/20 text-secondary" : "bg-primary/20 text-primary"}`}>
@@ -250,11 +254,20 @@ const Admin = () => {
                 <td className="px-4 py-3 whitespace-nowrap font-mono text-xs">{r.upgrade_payment_id || "—"}</td>
                 <td className="px-4 py-3 whitespace-nowrap">{r.upgrade_amount != null ? `₹${(r.upgrade_amount / 100).toFixed(2)}` : "—"}</td>
                 <td className="px-4 py-3 whitespace-nowrap text-xs">{r.upgraded_at ? new Date(r.upgraded_at).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "medium" }) : "—"}</td>
+                <td className="px-4 py-3 whitespace-nowrap">
+                  {r.refunded ? (
+                    <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-destructive/20 text-destructive" title={r.refunded_at ? new Date(r.refunded_at).toLocaleString("en-IN") : ""}>
+                      Refunded{r.refunded_amount != null ? ` ₹${(r.refunded_amount / 100).toFixed(2)}` : ""}
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground">—</span>
+                  )}
+                </td>
               </tr>
             ))}
             {registrations.length === 0 && (
               <tr>
-                <td colSpan={19} className="px-4 py-8 text-center text-muted-foreground">
+                <td colSpan={20} className="px-4 py-8 text-center text-muted-foreground">
                   No registrations yet.
                 </td>
               </tr>
