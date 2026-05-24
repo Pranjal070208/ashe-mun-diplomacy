@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Send, Plus, Trash2, ChevronDown, ChevronUp, Users, User, ArrowUpCircle, Search, CheckCircle2 } from "lucide-react";
+import { X, Send, Plus, Trash2, ChevronDown, ChevronUp, Users, User, Search, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -509,17 +509,6 @@ const RegistrationModal = ({ open, onClose }: RegistrationModalProps) => {
                 }`}
               >
                 <Users size={14} /> School
-              </button>
-              <button
-                type="button"
-                onClick={() => setMode("upgrade")}
-                className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-3 rounded-xl text-xs sm:text-sm font-semibold transition-all border ${
-                  mode === "upgrade"
-                    ? "bg-primary text-primary-foreground border-primary shadow-lg"
-                    : "bg-card border-border text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <ArrowUpCircle size={14} /> Upgrade
               </button>
             </div>
 
