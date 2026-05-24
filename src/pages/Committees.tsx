@@ -277,7 +277,7 @@ const Committees = () => {
           pointer-events: none;
           background: radial-gradient(ellipse at center, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 70%, transparent 100%);
         }
-        .ashe-bar:hover .ashe-expanded { opacity: 1; transform: translateY(0) scale(1); }
+        .ashe-bar:hover .ashe-expanded { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
         .ashe-logo-lg {
           width: 80px; height: 80px; object-fit: contain;
           filter: drop-shadow(0 0 24px rgba(75,156,211,0.9));
