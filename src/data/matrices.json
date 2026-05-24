@@ -1,0 +1,619 @@
+{
+  "UNSC": [
+    "People's Republic of China",
+    "French Republic",
+    "Russian Federation",
+    "United Kingdom of Great Britain and Northern Ireland",
+    "United States of America",
+    "Federal Republic of Somalia",
+    "Republic of Colombia",
+    "Kingdom of Bahrain",
+    "Democratic Republic of the Congo",
+    "Kingdom of Denmark",
+    "Hellenic Republic",
+    "Republic of Latvia",
+    "Republic of Liberia",
+    "Islamic Republic of Pakistan",
+    "Republic of Panama",
+    "Malaysia",
+    "Republic of Indonesia",
+    "Islamic Republic of Iran",
+    "Sultanate of Oman",
+    "Kingdom of Saudi Arabia",
+    "United Arab Emirates",
+    "State of Qatar",
+    "State of Kuwait",
+    "Republic of Iraq",
+    "Republic of India",
+    "Japan",
+    "Republic of Korea",
+    "Republic of Singapore",
+    "Republic of Türkiye",
+    "Arab Republic of Egypt",
+    "State of Israel",
+    "Republic of Yemen",
+    "Italian Republic",
+    "Federal Republic of Germany",
+    "Kingdom of the Netherlands",
+    "Commonwealth of Australia",
+    "Canada",
+    "Kingdom of Norway",
+    "Hellenic Republic"
+  ],
+  "UNCND": [
+    "United States of America",
+    "United Mexican States",
+    "People’s Republic of China",
+    "Republic of India",
+    "Canada",
+    "Republic of Colombia",
+    "Republic of Peru",
+    "Plurinational State of Bolivia",
+    "Islamic Republic of Afghanistan",
+    "Islamic Republic of Pakistan",
+    "Islamic Republic of Iran",
+    "Republic of Türkiye",
+    "Russian Federation",
+    "Ukraine",
+    "Federal Republic of Germany",
+    "French Republic",
+    "Italian Republic",
+    "Kingdom of the Netherlands",
+    "Kingdom of Belgium",
+    "Kingdom of Spain",
+    "Portuguese Republic",
+    "Federative Republic of Brazil",
+    "Republic of Ecuador",
+    "Bolivarian Republic of Venezuela",
+    "Republic of Haiti",
+    "Republic of El Salvador",
+    "Republic of Guatemala",
+    "Republic of Honduras",
+    "Republic of Costa Rica",
+    "Republic of Panama",
+    "Commonwealth of Australia",
+    "New Zealand",
+    "Kingdom of Thailand",
+    "Republic of the Union of Myanmar",
+    "Lao People’s Democratic Republic",
+    "Kingdom of Cambodia",
+    "Republic of Singapore",
+    "Republic of South Africa",
+    "Federal Republic of Nigeria",
+    "United Arab Emirates"
+  ],
+  "UNGALEGAL": [
+    "United States of America",
+    "People’s Republic of China",
+    "Russian Federation",
+    "Democratic People’s Republic of Korea",
+    "Islamic Republic of Iran",
+    "United Kingdom of Great Britain and Northern Ireland",
+    "French Republic",
+    "Federal Republic of Germany",
+    "State of Israel",
+    "Republic of India",
+    "Japan",
+    "Republic of Korea",
+    "Canada",
+    "Commonwealth of Australia",
+    "New Zealand",
+    "Kingdom of the Netherlands",
+    "Kingdom of Belgium",
+    "Italian Republic",
+    "Kingdom of Spain",
+    "Swiss Confederation",
+    "Kingdom of Sweden",
+    "Republic of Finland",
+    "Kingdom of Norway",
+    "Republic of Estonia",
+    "Republic of Poland",
+    "Ukraine",
+    "Republic of Türkiye",
+    "Federative Republic of Brazil",
+    "United Mexican States",
+    "Republic of Singapore",
+    "Malaysia",
+    "Republic of Indonesia",
+    "Socialist Republic of Viet Nam",
+    "United Arab Emirates",
+    "Kingdom of Saudi Arabia",
+    "Federal Republic of Nigeria",
+    "Republic of South Africa",
+    "Argentine Republic",
+    "Republic of Cuba",
+    "Bolivarian Republic of Venezuela"
+  ],
+  "IPJ": [
+    "Reuters News Agency",
+    "Associated Press",
+    "Agence France-Presse",
+    "British Broadcasting Corporation",
+    "Cable News Network",
+    "Fox News Channel",
+    "MSNBC",
+    "The New York Times",
+    "The Washington Post",
+    "Bloomberg News",
+    "CNBC",
+    "Al Jazeera Media Network",
+    "Al Arabiya News Channel",
+    "Middle East Eye",
+    "Xinhua News Agency",
+    "China Global Television Network",
+    "People’s Daily",
+    "Global Times",
+    "Russia Today",
+    "Russian News Agency TASS",
+    "Sputnik News Agency",
+    "Asian News International",
+    "Press Trust of India",
+    "New Delhi Television",
+    "Republic TV",
+    "The Hindu",
+    "India Today",
+    "Times Now",
+    "World Is One News",
+    "Dawn News",
+    "Geo News",
+    "Turkish Radio and Television World",
+    "Press TV",
+    "Deutsche Welle",
+    "France 24",
+    "Euronews",
+    "NHK World Japan",
+    "The Guardian",
+    "Financial Times",
+    "The Wall Street Journal"
+  ],
+  "AIPPM": [
+    {
+      "name": "Narendra Modi",
+      "party": "BJP"
+    },
+    {
+      "name": "Amit Shah",
+      "party": "BJP"
+    },
+    {
+      "name": "Rajnath Singh",
+      "party": "BJP"
+    },
+    {
+      "name": "Nitin Gadkari",
+      "party": "BJP"
+    },
+    {
+      "name": "J. P. Nadda",
+      "party": "BJP"
+    },
+    {
+      "name": "Yogi Adityanath",
+      "party": "BJP"
+    },
+    {
+      "name": "Shivraj Singh Chouhan",
+      "party": "BJP"
+    },
+    {
+      "name": "Vasundhara Raje",
+      "party": "BJP"
+    },
+    {
+      "name": "Devendra Fadnavis",
+      "party": "BJP"
+    },
+    {
+      "name": "Smriti Irani",
+      "party": "BJP"
+    },
+    {
+      "name": "Dharmendra Pradhan",
+      "party": "BJP"
+    },
+    {
+      "name": "Piyush Goyal",
+      "party": "BJP"
+    },
+    {
+      "name": "Ashwini Vaishnaw",
+      "party": "BJP"
+    },
+    {
+      "name": "Anurag Thakur",
+      "party": "BJP"
+    },
+    {
+      "name": "Bhupender Yadav",
+      "party": "BJP"
+    },
+    {
+      "name": "Himanta Biswa Sarma",
+      "party": "BJP"
+    },
+    {
+      "name": "Manohar Lal Khattar",
+      "party": "BJP"
+    },
+    {
+      "name": "Basavaraj Bommai",
+      "party": "BJP"
+    },
+    {
+      "name": "Keshav Prasad Maurya",
+      "party": "BJP"
+    },
+    {
+      "name": "Tejasvi Surya",
+      "party": "BJP"
+    },
+    {
+      "name": "Rahul Gandhi",
+      "party": "INC"
+    },
+    {
+      "name": "Mallikarjun Kharge",
+      "party": "INC"
+    },
+    {
+      "name": "Priyanka Gandhi Vadra",
+      "party": "INC"
+    },
+    {
+      "name": "Shashi Tharoor",
+      "party": "INC"
+    },
+    {
+      "name": "Sachin Pilot",
+      "party": "INC"
+    },
+    {
+      "name": "Ashok Gehlot",
+      "party": "INC"
+    },
+    {
+      "name": "Bhupesh Baghel",
+      "party": "INC"
+    },
+    {
+      "name": "Siddaramaiah",
+      "party": "INC"
+    },
+    {
+      "name": "Revanth Reddy",
+      "party": "INC"
+    },
+    {
+      "name": "Adhir Ranjan Chowdhury",
+      "party": "INC"
+    },
+    {
+      "name": "Jairam Ramesh",
+      "party": "INC"
+    },
+    {
+      "name": "K. C. Venugopal",
+      "party": "INC"
+    },
+    {
+      "name": "P. Chidambaram",
+      "party": "INC"
+    },
+    {
+      "name": "Digvijaya Singh",
+      "party": "INC"
+    },
+    {
+      "name": "Salman Khurshid",
+      "party": "INC"
+    },
+    {
+      "name": "Manish Tewari",
+      "party": "INC"
+    },
+    {
+      "name": "Kumari Selja",
+      "party": "INC"
+    },
+    {
+      "name": "Randeep Surjewala",
+      "party": "INC"
+    },
+    {
+      "name": "Deepender Hooda",
+      "party": "INC"
+    },
+    {
+      "name": "Gaurav Gogoi",
+      "party": "INC"
+    },
+    {
+      "name": "Arvind Kejriwal",
+      "party": "AAP"
+    },
+    {
+      "name": "Atishi",
+      "party": "AAP"
+    },
+    {
+      "name": "Bhagwant Mann",
+      "party": "AAP"
+    },
+    {
+      "name": "Sanjay Singh",
+      "party": "AAP"
+    },
+    {
+      "name": "Raghav Chadha",
+      "party": "Independent"
+    },
+    {
+      "name": "Manish Sisodia",
+      "party": "AAP"
+    },
+    {
+      "name": "Akhilesh Yadav",
+      "party": "SP"
+    },
+    {
+      "name": "Dimple Yadav",
+      "party": "SP"
+    },
+    {
+      "name": "Ram Gopal Yadav",
+      "party": "SP"
+    },
+    {
+      "name": "Shivpal Singh Yadav",
+      "party": "SP"
+    },
+    {
+      "name": "Tejashwi Yadav",
+      "party": "RJD"
+    },
+    {
+      "name": "Lalu Prasad Yadav",
+      "party": "RJD"
+    },
+    {
+      "name": "Misa Bharti",
+      "party": "RJD"
+    },
+    {
+      "name": "Nitish Kumar",
+      "party": "JD(U)"
+    },
+    {
+      "name": "Rajiv Ranjan Singh",
+      "party": "JD(U)"
+    },
+    {
+      "name": "Chandrababu Naidu",
+      "party": "TDP"
+    },
+    {
+      "name": "Nara Lokesh",
+      "party": "TDP"
+    },
+    {
+      "name": "M. K. Stalin",
+      "party": "DMK"
+    },
+    {
+      "name": "Kanimozhi Karunanidhi",
+      "party": "DMK"
+    },
+    {
+      "name": "T. R. Baalu",
+      "party": "DMK"
+    },
+    {
+      "name": "Uddhav Thackeray",
+      "party": "Shiv Sena (UBT)"
+    },
+    {
+      "name": "Aaditya Thackeray",
+      "party": "Shiv Sena (UBT)"
+    },
+    {
+      "name": "Eknath Shinde",
+      "party": "Shiv Sena"
+    },
+    {
+      "name": "Ajit Pawar",
+      "party": "NCP"
+    },
+    {
+      "name": "Sharad Pawar",
+      "party": "NCP (SP)"
+    },
+    {
+      "name": "Supriya Sule",
+      "party": "NCP (SP)"
+    },
+    {
+      "name": "Mamata Banerjee",
+      "party": "TMC"
+    },
+    {
+      "name": "Abhishek Banerjee",
+      "party": "TMC"
+    },
+    {
+      "name": "Derek O'Brien",
+      "party": "TMC"
+    },
+    {
+      "name": "Sukhendu Sekhar Roy",
+      "party": "TMC"
+    },
+    {
+      "name": "Naveen Patnaik",
+      "party": "BJD"
+    },
+    {
+      "name": "Pinaki Misra",
+      "party": "BJD"
+    },
+    {
+      "name": "Hemant Soren",
+      "party": "JMM"
+    },
+    {
+      "name": "Omar Abdullah",
+      "party": "JKNC"
+    },
+    {
+      "name": "Mehbooba Mufti",
+      "party": "PDP"
+    },
+    {
+      "name": "Farooq Abdullah",
+      "party": "JKNC"
+    },
+    {
+      "name": "Mayawati",
+      "party": "BSP"
+    },
+    {
+      "name": "Satish Chandra Mishra",
+      "party": "BSP"
+    },
+    {
+      "name": "Asaduddin Owaisi",
+      "party": "AIMIM"
+    },
+    {
+      "name": "Akbaruddin Owaisi",
+      "party": "AIMIM"
+    },
+    {
+      "name": "H. D. Kumaraswamy",
+      "party": "JD(S)"
+    },
+    {
+      "name": "D. K. Shivakumar",
+      "party": "INC"
+    },
+    {
+      "name": "Bandi Sanjay Kumar",
+      "party": "BJP"
+    },
+    {
+      "name": "K. Kavitha",
+      "party": "BRS"
+    },
+    {
+      "name": "K. T. Rama Rao",
+      "party": "BRS"
+    },
+    {
+      "name": "Chandrashekhar Rao",
+      "party": "BRS"
+    },
+    {
+      "name": "Pema Khandu",
+      "party": "BJP"
+    },
+    {
+      "name": "Conrad Sangma",
+      "party": "NPP"
+    },
+    {
+      "name": "Sarbananda Sonowal",
+      "party": "BJP"
+    },
+    {
+      "name": "Kiren Rijiju",
+      "party": "BJP"
+    },
+    {
+      "name": "Ghulam Nabi Azad",
+      "party": "DPAP"
+    },
+    {
+      "name": "Anupriya Patel",
+      "party": "Apna Dal (S)"
+    },
+    {
+      "name": "Chirag Paswan",
+      "party": "LJP (RV)"
+    },
+    {
+      "name": "Jayant Chaudhary",
+      "party": "RLD"
+    },
+    {
+      "name": "Harsimrat Kaur Badal",
+      "party": "SAD"
+    },
+    {
+      "name": "Sukhbir Singh Badal",
+      "party": "SAD"
+    },
+    {
+      "name": "Y. S. Jagan Mohan Reddy",
+      "party": "YSRCP"
+    },
+    {
+      "name": "Pawan Kalyan",
+      "party": "Jana Sena Party"
+    },
+    {
+      "name": "Arvind Sawant",
+      "party": "Shiv Sena (UBT)"
+    },
+    {
+      "name": "Mahua Moitra",
+      "party": "TMC"
+    },
+    {
+      "name": "Vijay (Thalapathy)",
+      "party": "TVK"
+    },
+    {
+      "name": "Sitaram Yechury",
+      "party": "CPI(M)"
+    },
+    {
+      "name": "Prakash Karat",
+      "party": "CPI(M)"
+    },
+    {
+      "name": "Brinda Karat",
+      "party": "CPI(M)"
+    },
+    {
+      "name": "M. A. Baby",
+      "party": "CPI(M)"
+    },
+    {
+      "name": "A. Raja",
+      "party": "CPI(M)"
+    },
+    {
+      "name": "D. Raja",
+      "party": "CPI"
+    },
+    {
+      "name": "Binoy Viswam",
+      "party": "CPI"
+    },
+    {
+      "name": "K. Subbarayan",
+      "party": "CPI"
+    },
+    {
+      "name": "Annie Raja",
+      "party": "CPI"
+    },
+    {
+      "name": "Navneet Rana",
+      "party": "Independent"
+    },
+    {
+      "name": "Kapil Sibal",
+      "party": "Independent"
+    }
+  ]
+}
