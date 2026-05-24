@@ -9,7 +9,7 @@ const Footer = () => (
         <div>
           <h3 className="font-display text-xl font-bold tracking-tight mb-3 gradient-text">ASHE MUN</h3>
           <p className="text-muted-foreground text-sm leading-relaxed font-body">
-            Deliberate with Clarity. Debate with Passion. Deliver with Purpose.
+            Initiate. Integrate. Implement.
           </p>
         </div>
         <div>
