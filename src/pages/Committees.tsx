@@ -326,6 +326,30 @@ const Committees = () => {
           text-shadow: 0 1px 12px rgba(0,0,0,1), 0 0 30px rgba(0,0,0,0.8);
         }
         .ashe-bar:hover .ashe-agenda { opacity: 1; transform: translateY(0); }
+        .ashe-matrix-btn {
+          margin-top: 12px;
+          align-self: center;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: clamp(0.65rem, 0.78vw, 0.82rem);
+          font-weight: 600;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: #c9a84c;
+          background: rgba(201,168,76,0.08);
+          border: 1px solid rgba(201,168,76,0.5);
+          border-radius: 999px;
+          padding: 7px 18px;
+          cursor: pointer;
+          opacity: 0; transform: translateY(6px);
+          transition: opacity 0.4s 0.46s, transform 0.4s 0.46s, background 0.25s, box-shadow 0.25s, color 0.25s;
+          text-shadow: 0 1px 10px rgba(0,0,0,0.9);
+        }
+        .ashe-bar:hover .ashe-matrix-btn { opacity: 1; transform: translateY(0); }
+        .ashe-matrix-btn:hover {
+          background: rgba(201,168,76,0.85);
+          color: #0a0f1c;
+          box-shadow: 0 0 24px rgba(201,168,76,0.45);
+        }
         .ashe-agenda--classified {
           font-family: 'Space Grotesk', sans-serif;
           font-size: clamp(0.75rem, 0.95vw, 1rem);
