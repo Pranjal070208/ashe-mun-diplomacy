@@ -441,6 +441,11 @@ const Committees = () => {
             opacity: 1 !important; transform: none !important; transition: none !important;
             line-height: 1.55 !important;
           }
+          .ashe-matrix-btn {
+            opacity: 1 !important; transform: none !important; transition: none !important;
+            margin-top: 8px !important; padding: 5px 14px !important;
+            font-size: clamp(0.6rem, 2.6vw, 0.72rem) !important;
+          }
         }
       `}</style>
 
