@@ -93,7 +93,7 @@ const Index = () => {
     <PageTransition>
       <SEO
         title="Ashe MUN — Model United Nations Conference (June 24–25, 2026)"
-        description="Ashe MUN 2026: a premier Model United Nations conference. Deliberate with Clarity. Debate with Passion. Deliver with Purpose. Register now."
+        description="Ashe MUN 2026: a premier Model United Nations conference. Initiate. Integrate. Implement. Register now."
         path="/"
       />
       {/* Hero */}
