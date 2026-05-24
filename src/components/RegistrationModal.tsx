@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Send, Plus, Trash2, ChevronDown, ChevronUp, Users, User, ArrowUpCircle, Search, CheckCircle2 } from "lucide-react";
+import { X, Send, Plus, Trash2, ChevronDown, ChevronUp, Users, User, Search, CheckCircle2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { z } from "zod";
