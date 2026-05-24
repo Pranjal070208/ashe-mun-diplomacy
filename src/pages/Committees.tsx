@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import PageTransition from "@/components/PageTransition";
 import SEO from "@/components/SEO";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import matrices from "@/data/matrices.json";
 
 import pageBg from "@/assets/committees/page-bg.avif";
 import bg1 from "@/assets/committees/UNSC.webp";
@@ -27,6 +29,7 @@ type Bar = {
   agenda?: string;
   agendaClassified?: boolean;
   acronymStyle?: React.CSSProperties;
+  matrixKey?: "UNSC" | "UNCND" | "UNGALEGAL" | "IPJ" | "AIPPM";
 };
 
 const bars: Bar[] = [
@@ -34,16 +37,19 @@ const bars: Bar[] = [
     bg: bg1, logo: logoUnsc, acronym: "UNSC",
     name: "United Nations<br/>Security Council",
     agenda: "Deliberation on Rising Maritime Tensions in Strategically Important Waterways, with Emphasis on the Strait of Hormuz, Freedom of Navigation, and the Protection of International Maritime Law under UNCLOS",
+    matrixKey: "UNSC",
   },
   {
     bg: bg2, logo: logoUncnd, acronym: "UNCND",
     name: "United Nations Commission on<br/>Narcotics and Drugs",
     agenda: "Deliberating on the Growing Global Fentanyl Crisis, the Spread of Synthetic Drug Networks, and the Inability of International Systems to Stop Cross-Border Drug Trafficking",
+    matrixKey: "UNCND",
   },
   {
     bg: bg3, logo: logoUnga, acronym: "UNGA LEGAL",
     name: "United Nations<br/>General Assembly",
     agenda: "Strengthening International Responses Against State-Sponsored Cyber Operations, Digital Espionage, and Transnational Cybercrime, with Special Emphasis on Key Cases Handled by the United States Department of Justice",
+    matrixKey: "UNGALEGAL",
   },
   {
     bg: bg4, logo: logoAdhoc, acronym: "AD-HOC",
@@ -59,16 +65,19 @@ const bars: Bar[] = [
   {
     bg: bg6, logo: logoAippm, acronym: "AIPPM",
     name: "All India Political<br/>Parties Meet",
+    matrixKey: "AIPPM",
   },
   {
     bg: bg7, logo: logoIp, acronym: "IP",
     name: "International<br/>Press",
     agenda: "Photography, Journalism and Caricature",
+    matrixKey: "IPJ",
   },
 ];
 
 const Committees = () => {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [matrixOpen, setMatrixOpen] = useState<string | null>(null);
 
   useEffect(() => {
     const pc = document.getElementById("ashe-particles");
@@ -317,6 +326,30 @@ const Committees = () => {
           text-shadow: 0 1px 12px rgba(0,0,0,1), 0 0 30px rgba(0,0,0,0.8);
         }
         .ashe-bar:hover .ashe-agenda { opacity: 1; transform: translateY(0); }
+        .ashe-matrix-btn {
+          margin-top: 12px;
+          align-self: center;
+          font-family: 'Space Grotesk', sans-serif;
+          font-size: clamp(0.65rem, 0.78vw, 0.82rem);
+          font-weight: 600;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: #c9a84c;
+          background: rgba(201,168,76,0.08);
+          border: 1px solid rgba(201,168,76,0.5);
+          border-radius: 999px;
+          padding: 7px 18px;
+          cursor: pointer;
+          opacity: 0; transform: translateY(6px);
+          transition: opacity 0.4s 0.46s, transform 0.4s 0.46s, background 0.25s, box-shadow 0.25s, color 0.25s;
+          text-shadow: 0 1px 10px rgba(0,0,0,0.9);
+        }
+        .ashe-bar:hover .ashe-matrix-btn { opacity: 1; transform: translateY(0); }
+        .ashe-matrix-btn:hover {
+          background: rgba(201,168,76,0.85);
+          color: #0a0f1c;
+          box-shadow: 0 0 24px rgba(201,168,76,0.45);
+        }
         .ashe-agenda--classified {
           font-family: 'Space Grotesk', sans-serif;
           font-size: clamp(0.75rem, 0.95vw, 1rem);
@@ -408,6 +441,11 @@ const Committees = () => {
             opacity: 1 !important; transform: none !important; transition: none !important;
             line-height: 1.55 !important;
           }
+          .ashe-matrix-btn {
+            opacity: 1 !important; transform: none !important; transition: none !important;
+            margin-top: 8px !important; padding: 5px 14px !important;
+            font-size: clamp(0.6rem, 2.6vw, 0.72rem) !important;
+          }
         }
       `}</style>
 
@@ -450,12 +488,54 @@ const Committees = () => {
                       {b.agenda}
                     </div>
                   )}
+                  {b.matrixKey && (
+                    <button
+                      type="button"
+                      className="ashe-matrix-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMatrixOpen(b.matrixKey!);
+                      }}
+                    >
+                      Public Eye Matrix
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      <Dialog open={matrixOpen !== null} onOpenChange={(o) => !o && setMatrixOpen(null)}>
+        <DialogContent className="max-w-2xl bg-[#0a0f1c] border-[#c9a84c]/40 text-white">
+          <DialogHeader>
+            <DialogTitle className="text-[#c9a84c] tracking-[0.2em] uppercase text-center text-lg font-semibold">
+              Public Eye Matrix
+            </DialogTitle>
+          </DialogHeader>
+          {matrixOpen && (
+            <div className="max-h-[60vh] overflow-y-auto pr-2 mt-2">
+              {matrixOpen === "AIPPM" ? (
+                <ol className="space-y-1.5 list-decimal list-inside text-sm">
+                  {(matrices.AIPPM as { name: string; party: string }[]).map((p, i) => (
+                    <li key={i} className="text-white/90">
+                      <span className="font-medium">{p.name}</span>
+                      {p.party && <span className="text-[#c9a84c]/80"> — {p.party}</span>}
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <ol className="space-y-1.5 list-decimal list-inside text-sm">
+                  {(matrices[matrixOpen as "UNSC" | "UNCND" | "UNGALEGAL" | "IPJ"] as string[]).map((v, i) => (
+                    <li key={i} className="text-white/90">{v}</li>
+                  ))}
+                </ol>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </PageTransition>
   );
 };
